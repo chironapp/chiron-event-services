@@ -29,7 +29,7 @@ Feel free to use some or all of this code for your own race timing projects! The
 ### Key Reusable Components:
 
 - **UI Components**: `SearchInput`, `ToggleSwitch`, `NoResultsFound`, `MaxWidthContainer`
-- **Navigation**: `TopNav` with responsive navigation and theme support
+- **Navigation**: `TopNav` with responsive navigation and theme support, `OrganiserTopNav` for organiser pages, `EventTopNav` for event detail pages
 - **Data Management**: Custom hooks (`useOrganisers`) with pagination and search
 - **API Layer**: Modular API functions that can be swapped with any backend
 - **Theme System**: Complete dark/light mode with consistent color schemes
