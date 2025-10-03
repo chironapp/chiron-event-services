@@ -16,8 +16,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useOrganisers } from "../hooks/useOrganisers";
-import type { Organiser } from "../lib/supabase";
+import { useOrganisers } from "../../hooks/useOrganisers";
+import type { Organiser } from "../../lib/supabase";
 
 /**
  * Organisers page component for browsing race organisers
