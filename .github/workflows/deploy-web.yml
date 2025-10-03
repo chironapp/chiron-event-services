@@ -55,8 +55,8 @@ jobs:
 
       - name: Copy 404 page for GitHub Pages
         run: |
-          echo "📄 Copying +not-found.html to 404.html for GitHub Pages"
-          cp dist/+not-found.html dist/404.html
+          echo "📄 Copying index.html to 404.html for GitHub Pages"
+          cp dist/index.html dist/404.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
