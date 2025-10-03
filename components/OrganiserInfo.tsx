@@ -23,8 +23,8 @@ export default function OrganiserInfo({ organiser }: OrganiserInfoProps) {
   const isDark = colorScheme === "dark";
 
   const handleWebsitePress = () => {
-    if (organiser.website_url) {
-      Linking.openURL(organiser.website_url);
+    if (organiser.website) {
+      Linking.openURL(organiser.website);
     }
   };
 
@@ -39,7 +39,7 @@ export default function OrganiserInfo({ organiser }: OrganiserInfoProps) {
         {organiser.name}
       </Text>
 
-      {organiser.website_url && (
+      {organiser.website && (
         <TouchableOpacity onPress={handleWebsitePress} style={styles.websiteContainer}>
           <Text
             style={[
@@ -47,7 +47,7 @@ export default function OrganiserInfo({ organiser }: OrganiserInfoProps) {
               { color: isDark ? "#4dabf7" : "#0066CC" },
             ]}
           >
-            {organiser.website_url}
+            {organiser.website}
           </Text>
         </TouchableOpacity>
       )}
