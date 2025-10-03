@@ -44,6 +44,13 @@ export default function TopNav() {
     router.navigate("/");
   };
 
+  /**
+   * Handles navigation to the organisers page
+   */
+  const handleOrganisersPress = () => {
+    router.navigate("/organisers");
+  };
+
   const isDark = colorScheme === "dark";
 
   return (
@@ -96,6 +103,21 @@ export default function TopNav() {
               ]}
             >
               Events
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={handleOrganisersPress}
+            accessibilityRole="button"
+            accessibilityLabel="Navigate to Organisers page"
+          >
+            <Text
+              style={[
+                styles.navText,
+                { color: isDark ? "#007AFF" : "#0066CC" },
+              ]}
+            >
+              Organisers
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
