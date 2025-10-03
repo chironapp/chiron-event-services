@@ -1,7 +1,8 @@
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import type { Organiser } from "@/lib/supabase";
+import { Link } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 
 interface OrganiserCardProps {
   /**
@@ -23,39 +24,42 @@ export default function OrganiserCard({ organiser }: OrganiserCardProps) {
   const isDark = colorScheme === "dark";
 
   return (
-    <View
-      style={[
-        styles.organiserCard,
-        {
-          backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
-          borderColor: isDark ? "#333333" : "#e0e0e0",
-        },
-      ]}
-    >
-      <View style={styles.organiserHeader}>
-        <Text
-          style={[
-            styles.organiserName,
-            { color: isDark ? "#ffffff" : "#000000" },
-          ]}
-          numberOfLines={2}
-        >
-          {organiser.name}
-        </Text>
-      </View>
+    <Link href={`/organisers/${organiser.id}`} asChild>
+      <Pressable
+        style={({ pressed }) => [
+          styles.organiserCard,
+          {
+            backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
+            borderColor: isDark ? "#333333" : "#e0e0e0",
+            opacity: pressed ? 0.7 : 1,
+          },
+        ]}
+      >
+        <View style={styles.organiserHeader}>
+          <Text
+            style={[
+              styles.organiserName,
+              { color: isDark ? "#ffffff" : "#000000" },
+            ]}
+            numberOfLines={2}
+          >
+            {organiser.name}
+          </Text>
+        </View>
 
-      {organiser.description && (
-        <Text
-          style={[
-            styles.organiserDescription,
-            { color: isDark ? "#cccccc" : "#666666" },
-          ]}
-          numberOfLines={3}
-        >
-          {organiser.description}
-        </Text>
-      )}
-    </View>
+        {organiser.description && (
+          <Text
+            style={[
+              styles.organiserDescription,
+              { color: isDark ? "#cccccc" : "#666666" },
+            ]}
+            numberOfLines={3}
+          >
+            {organiser.description}
+          </Text>
+        )}
+      </Pressable>
+    </Link>
   );
 }
 

@@ -12,6 +12,7 @@ export interface FetchEventsParams {
   search?: string;
   sortBy?: "race_start_date" | "created_at" | "updated_at";
   sortOrder?: "asc" | "desc";
+  organiserId?: string;
 }
 
 export interface FetchEventsResponse {
@@ -65,6 +66,7 @@ export async function fetchEvents(
     search = "",
     sortBy = "race_start_date",
     sortOrder = "asc",
+    organiserId,
   } = params;
 
   try {
@@ -96,6 +98,11 @@ export async function fetchEvents(
       `,
         { count: "exact" }
       );
+
+    // Add organiser filter if provided
+    if (organiserId) {
+      query = query.eq("organiser_id", organiserId);
+    }
 
     // Add search filter if provided
     if (search.trim()) {
