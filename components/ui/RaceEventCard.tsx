@@ -5,8 +5,9 @@ import {
   RACE_STATUS_COLORS,
   SPORT_TYPE_LABELS,
 } from "@/constants/raceTypes";
+import { Link } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 
 interface RaceEventCardProps {
   /**
@@ -52,83 +53,86 @@ export default function RaceEventCard({ event }: RaceEventCardProps) {
   const sportLabel = SPORT_TYPE_LABELS[event.sport_type] || "Other";
 
   return (
-    <View
-      style={[
-        styles.eventCard,
-        {
-          backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
-          borderColor: isDark ? "#333333" : "#e0e0e0",
-        },
-      ]}
-    >
-      {/* Status Badge */}
-      <View
-        style={[
-          styles.statusBadge,
+    <Link href={`/events/${event.id}`} asChild>
+      <Pressable
+        style={({ pressed }) => [
+          styles.eventCard,
           {
-            backgroundColor: statusColor,
+            backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
+            borderColor: isDark ? "#333333" : "#e0e0e0",
+            opacity: pressed ? 0.7 : 1,
           },
         ]}
       >
-        <Text style={styles.statusText}>{statusLabel}</Text>
-      </View>
+        {/* Status Badge */}
+        <View
+          style={[
+            styles.statusBadge,
+            {
+              backgroundColor: statusColor,
+            },
+          ]}
+        >
+          <Text style={styles.statusText}>{statusLabel}</Text>
+        </View>
 
-      {/* Event Title */}
-      <View style={styles.eventHeader}>
-        <Text
-          style={[
-            styles.eventTitle,
-            { color: isDark ? "#ffffff" : "#000000" },
-          ]}
-          numberOfLines={2}
-        >
-          {event.title || "Untitled Event"}
-        </Text>
-      </View>
+        {/* Event Title */}
+        <View style={styles.eventHeader}>
+          <Text
+            style={[
+              styles.eventTitle,
+              { color: isDark ? "#ffffff" : "#000000" },
+            ]}
+            numberOfLines={2}
+          >
+            {event.title || "Untitled Event"}
+          </Text>
+        </View>
 
-      {/* Event Details */}
-      <View style={styles.eventDetails}>
-        <Text
-          style={[
-            styles.detailText,
-            { color: isDark ? "#cccccc" : "#666666" },
-          ]}
-        >
-          📅 {formatDate(event.race_start_date)}
-        </Text>
-        <Text
-          style={[
-            styles.detailText,
-            { color: isDark ? "#cccccc" : "#666666" },
-          ]}
-        >
-          🏃 {sportLabel}
-        </Text>
-        {event.organisers && (
+        {/* Event Details */}
+        <View style={styles.eventDetails}>
           <Text
             style={[
               styles.detailText,
               { color: isDark ? "#cccccc" : "#666666" },
             ]}
           >
-            🏢 {event.organisers.name}
+            📅 {formatDate(event.race_start_date)}
+          </Text>
+          <Text
+            style={[
+              styles.detailText,
+              { color: isDark ? "#cccccc" : "#666666" },
+            ]}
+          >
+            🏃 {sportLabel}
+          </Text>
+          {event.organisers && (
+            <Text
+              style={[
+                styles.detailText,
+                { color: isDark ? "#cccccc" : "#666666" },
+              ]}
+            >
+              🏢 {event.organisers.name}
+            </Text>
+          )}
+        </View>
+
+        {/* Description */}
+        {event.description && (
+          <Text
+            style={[
+              styles.eventDescription,
+              { color: isDark ? "#cccccc" : "#666666" },
+            ]}
+            numberOfLines={3}
+          >
+            {event.description}
           </Text>
         )}
-      </View>
-
-      {/* Description */}
-      {event.description && (
-        <Text
-          style={[
-            styles.eventDescription,
-            { color: isDark ? "#cccccc" : "#666666" },
-          ]}
-          numberOfLines={3}
-        >
-          {event.description}
-        </Text>
-      )}
-    </View>
+      </Pressable>
+    </Link>
   );
 }
 
