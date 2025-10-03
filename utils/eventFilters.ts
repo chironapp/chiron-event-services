@@ -72,3 +72,16 @@ export function filterResultsEvents(
   const completed = filterCompletedEvents(events);
   return [...started, ...completed];
 }
+
+/**
+ * Check if an event is upcoming (registration open or closed)
+ * 
+ * @param event - Race event to check
+ * @returns True if the event is upcoming, false otherwise
+ */
+export function isUpcoming(event: RaceEventWithOrganiser): boolean {
+  return (
+    event.race_status === RACE_STATUSES.REGISTRATION_OPEN ||
+    event.race_status === RACE_STATUSES.REGISTRATION_CLOSED
+  );
+}
