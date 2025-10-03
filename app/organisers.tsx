@@ -2,6 +2,7 @@ import Footer from "@/components/Footer";
 import { SearchInput } from "@/components/input";
 import TopNav from "@/components/TopNav";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
+import OrganiserCard from "@/components/ui/OrganiserCard";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Stack } from "expo-router";
 import React, { useState } from "react";
@@ -72,56 +73,7 @@ export default function OrganisersPage() {
    * Render individual organiser card
    */
   const renderOrganiserCard = ({ item }: { item: Organiser }) => (
-    <View
-      style={[
-        styles.organiserCard,
-        {
-          backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
-          borderColor: isDark ? "#333333" : "#e0e0e0",
-        },
-      ]}
-    >
-      <View style={styles.organiserHeader}>
-        <Text
-          style={[
-            styles.organiserName,
-            { color: isDark ? "#ffffff" : "#000000" },
-          ]}
-          numberOfLines={2}
-        >
-          {item.name}
-        </Text>
-        <Text style={styles.organiserDate}>
-          {new Date(item.created_at).toLocaleDateString()}
-        </Text>
-      </View>
-
-      {item.description && (
-        <Text
-          style={[
-            styles.organiserDescription,
-            { color: isDark ? "#cccccc" : "#666666" },
-          ]}
-          numberOfLines={3}
-        >
-          {item.description}
-        </Text>
-      )}
-
-      <View style={styles.organiserFooter}>
-        {item.website && (
-          <Text
-            style={[
-              styles.organiserWebsite,
-              { color: isDark ? "#66b3ff" : "#0066cc" },
-            ]}
-            numberOfLines={1}
-          >
-            🌐 {item.website.replace(/^https?:\/\//, "")}
-          </Text>
-        )}
-      </View>
-    </View>
+    <OrganiserCard organiser={item} />
   );
 
   /**
@@ -413,43 +365,6 @@ const styles = StyleSheet.create({
   row: {
     justifyContent: "space-between",
     paddingHorizontal: 4,
-  },
-  organiserCard: {
-    flex: 0.48,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  organiserHeader: {
-    marginBottom: 12,
-  },
-  organiserName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 4,
-    lineHeight: 22,
-  },
-  organiserDate: {
-    fontSize: 12,
-    color: "#999999",
-  },
-  organiserDescription: {
-    fontSize: 14,
-    lineHeight: 18,
-    marginBottom: 12,
-  },
-  organiserFooter: {
-    marginTop: "auto",
-  },
-  organiserWebsite: {
-    fontSize: 12,
-    fontWeight: "500",
   },
   paginationContainer: {
     flexDirection: "row",
