@@ -14,6 +14,12 @@ interface OrganiserCardProps {
 /**
  * Reusable organiser card component for displaying organiser information
  *
+ * @remarks
+ * This component is designed to work within a FlatList with numColumns={2}.
+ * The wrapper View with flex: 0.48 ensures proper sizing in the grid layout,
+ * as the Link component with asChild prop doesn't properly propagate flex
+ * properties to the Pressable.
+ *
  * @example
  * ```tsx
  * <OrganiserCard organiser={organiserData} />
@@ -24,48 +30,52 @@ export default function OrganiserCard({ organiser }: OrganiserCardProps) {
   const isDark = colorScheme === "dark";
 
   return (
-    <Link href={`/organisers/${organiser.id}`} asChild>
-      <Pressable
-        style={({ pressed }) => [
-          styles.organiserCard,
-          {
-            backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
-            borderColor: isDark ? "#333333" : "#e0e0e0",
-            opacity: pressed ? 0.7 : 1,
-          },
-        ]}
-      >
-        <View style={styles.organiserHeader}>
-          <Text
-            style={[
-              styles.organiserName,
-              { color: isDark ? "#ffffff" : "#000000" },
-            ]}
-            numberOfLines={2}
-          >
-            {organiser.name}
-          </Text>
-        </View>
+    <View style={styles.cardWrapper}>
+      <Link href={`/organisers/${organiser.id}`} asChild>
+        <Pressable
+          style={({ pressed }) => [
+            styles.organiserCard,
+            {
+              backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
+              borderColor: isDark ? "#333333" : "#e0e0e0",
+              opacity: pressed ? 0.7 : 1,
+            },
+          ]}
+        >
+          <View style={styles.organiserHeader}>
+            <Text
+              style={[
+                styles.organiserName,
+                { color: isDark ? "#ffffff" : "#000000" },
+              ]}
+              numberOfLines={2}
+            >
+              {organiser.name}
+            </Text>
+          </View>
 
-        {organiser.description && (
-          <Text
-            style={[
-              styles.organiserDescription,
-              { color: isDark ? "#cccccc" : "#666666" },
-            ]}
-            numberOfLines={3}
-          >
-            {organiser.description}
-          </Text>
-        )}
-      </Pressable>
-    </Link>
+          {organiser.description && (
+            <Text
+              style={[
+                styles.organiserDescription,
+                { color: isDark ? "#cccccc" : "#666666" },
+              ]}
+              numberOfLines={3}
+            >
+              {organiser.description}
+            </Text>
+          )}
+        </Pressable>
+      </Link>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  organiserCard: {
+  cardWrapper: {
     flex: 0.48,
+  },
+  organiserCard: {
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
