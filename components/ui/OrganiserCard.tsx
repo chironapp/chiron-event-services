@@ -14,6 +14,12 @@ interface OrganiserCardProps {
 /**
  * Reusable organiser card component for displaying organiser information
  *
+ * @remarks
+ * This component is designed to work within a FlatList with numColumns={2}.
+ * The wrapper View with flex: 0.48 ensures proper sizing in the grid layout,
+ * as the Link component with asChild prop doesn't properly propagate flex
+ * properties to the Pressable.
+ *
  * @example
  * ```tsx
  * <OrganiserCard organiser={organiserData} />
