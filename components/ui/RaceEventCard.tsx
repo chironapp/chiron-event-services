@@ -32,11 +32,11 @@ export default function RaceEventCard({ event }: RaceEventCardProps) {
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "Date TBA";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
+    const day = date.getDate();
+    const month = date.toLocaleDateString("en-US", { month: "long" });
+    const year = date.getFullYear();
+    return `${weekday} ${day} ${month} ${year}`;
   };
 
   // Get status color
@@ -64,18 +64,6 @@ export default function RaceEventCard({ event }: RaceEventCardProps) {
           },
         ]}
       >
-        {/* Status Badge */}
-        <View
-          style={[
-            styles.statusBadge,
-            {
-              backgroundColor: statusColor,
-            },
-          ]}
-        >
-          <Text style={styles.statusText}>{statusLabel}</Text>
-        </View>
-
         {/* Event Title */}
         <View style={styles.eventHeader}>
           <Text
@@ -91,14 +79,27 @@ export default function RaceEventCard({ event }: RaceEventCardProps) {
 
         {/* Event Details */}
         <View style={styles.eventDetails}>
-          <Text
-            style={[
-              styles.detailText,
-              { color: isDark ? "#cccccc" : "#666666" },
-            ]}
-          >
-            {formatDate(event.race_start_date)}
-          </Text>
+          <View style={styles.dateStatusRow}>
+            <Text
+              style={[
+                styles.detailText,
+                { color: isDark ? "#cccccc" : "#666666" },
+              ]}
+            >
+              {formatDate(event.race_start_date)}
+            </Text>
+            {/* Status Badge */}
+            <View
+              style={[
+                styles.statusBadge,
+                {
+                  backgroundColor: statusColor,
+                },
+              ]}
+            >
+              <Text style={styles.statusText}>{statusLabel}</Text>
+            </View>
+          </View>
           <Text
             style={[
               styles.detailText,
@@ -134,22 +135,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  statusBadge: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  statusText: {
-    color: "#ffffff",
-    fontSize: 12,
-    fontWeight: "600",
-  },
   eventHeader: {
     marginBottom: 12,
-    paddingRight: 100, // Make space for status badge
   },
   eventTitle: {
     fontSize: 20,
@@ -159,6 +146,21 @@ const styles = StyleSheet.create({
   eventDetails: {
     marginBottom: 8,
     gap: 4,
+  },
+  dateStatusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  statusText: {
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: "600",
   },
   detailText: {
     fontSize: 14,
