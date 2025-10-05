@@ -44,7 +44,7 @@ export function getFullName(
  * capitalizeFirst(null) // ""
  */
 export function capitalizeFirst(str: string | null | undefined): string {
-  if (!str) return "";
+  if (!str || typeof str !== "string") return "";
   
   const trimmed = str.trim();
   if (trimmed.length === 0) return "";
