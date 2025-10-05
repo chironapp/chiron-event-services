@@ -4,6 +4,59 @@ This directory contains API functions for interacting with the Supabase database
 
 ## Available APIs
 
+### Results API (`/api/results.ts`)
+
+Functions for fetching race start lists and results data with pagination and search capabilities.
+
+#### Functions
+
+- **`fetchRaceResults(params)`** - Fetch race start list or results with pagination
+- **`getResultsCount(eventId)`** - Get total count of results for an event
+
+#### Usage Example
+
+```typescript
+import { fetchRaceResults } from "../api/results";
+
+// Fetch results for an event
+const result = await fetchRaceResults({
+  eventId: "event-123",
+  page: 1,
+  limit: 50,
+  search: "John",
+  sortBy: "position",
+  sortOrder: "asc",
+});
+
+console.log(result.data); // Array of results
+console.log(result.count); // Total count
+```
+
+#### Parameters
+
+| Parameter   | Type   | Default    | Description                                                      |
+| ----------- | ------ | ---------- | ---------------------------------------------------------------- |
+| `eventId`   | string | (required) | Event ID to fetch results for                                    |
+| `page`      | number | 1          | Page number (1-based)                                            |
+| `limit`     | number | 20         | Items per page                                                   |
+| `search`    | string | ''         | Search term for bib number or athlete name                       |
+| `sortBy`    | string | 'position' | Sort field: 'position', 'bib_number', 'athlete_name', 'finish_time' |
+| `sortOrder` | string | 'asc'      | Sort direction: 'asc' or 'desc'                                  |
+
+#### Response Format
+
+```typescript
+interface FetchResultsResponse {
+  data: RaceStartListResult[]; // Array of result records
+  count: number; // Total number of records
+  page: number; // Current page number
+  limit: number; // Items per page
+  totalPages: number; // Total number of pages
+  hasNextPage: boolean; // Whether next page exists
+  hasPreviousPage: boolean; // Whether previous page exists
+}
+```
+
 ### Organisers API (`/api/organisers.ts`)
 
 Functions for managing organiser data with pagination and search capabilities.
