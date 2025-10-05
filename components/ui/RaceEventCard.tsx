@@ -1,13 +1,13 @@
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import type { RaceEventWithOrganiser } from "@/api/events";
 import {
-  RACE_STATUS_LABELS,
   RACE_STATUS_COLORS,
+  RACE_STATUS_LABELS,
   SPORT_TYPE_LABELS,
 } from "@/constants/raceTypes";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Link } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface RaceEventCardProps {
   /**
@@ -107,6 +107,20 @@ export default function RaceEventCard({ event }: RaceEventCardProps) {
           >
             🏃 {sportLabel}
           </Text>
+          {event.distance && (
+            <Text
+              style={[
+                styles.detailText,
+                { color: isDark ? "#cccccc" : "#666666" },
+              ]}
+            >
+              📏{" "}
+              {(event.distance / 1000).toFixed(
+                event.distance % 1000 === 0 ? 0 : 1
+              )}
+              km
+            </Text>
+          )}
           {event.organisers && (
             <Text
               style={[

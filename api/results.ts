@@ -10,7 +10,7 @@ export interface FetchResultsParams {
   page?: number;
   limit?: number;
   search?: string;
-  sortBy?: "position" | "bib_number" | "athlete_name" | "finish_time";
+  sortBy?: "position" | "race_number" | "first_name" | "finish_time100";
   sortOrder?: "asc" | "desc";
   eventId: string;
 }
@@ -72,7 +72,7 @@ export async function fetchRaceResults(
     // Add search filter if provided
     if (search.trim()) {
       query = query.or(
-        `bib_number.ilike.%${search}%,athlete_name.ilike.%${search}%`
+        `race_number.eq.${search},first_name.ilike.%${search}%,last_name.ilike.%${search}%`
       );
     }
 

@@ -1,6 +1,26 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
 import type { RaceStartListResult } from "@/lib/supabase";
+import React from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+
+/**
+ * Format time from centiseconds to readable format (HH:MM:SS or MM:SS)
+ */
+function formatTime(centiseconds: number | null): string {
+  if (!centiseconds) return "-";
+
+  const totalSeconds = Math.floor(centiseconds / 100);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
+  } else {
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  }
+}
 
 interface StartListResultsTableProps {
   results: RaceStartListResult[];
@@ -49,7 +69,7 @@ export function StartListResultsTable({
                 { color: textColor, borderColor },
               ]}
             >
-              Bib
+              Race #
             </Text>
             <Text
               style={[
@@ -111,7 +131,7 @@ export function StartListResultsTable({
                   { color: textColor, borderColor },
                 ]}
               >
-                {result.bib_number || "-"}
+                {result.race_number || "-"}
               </Text>
               <Text
                 style={[
@@ -120,7 +140,7 @@ export function StartListResultsTable({
                   { color: textColor, borderColor },
                 ]}
               >
-                {result.athlete_name || "Unknown"}
+                {`${result.first_name} ${result.last_name}`.trim() || "Unknown"}
               </Text>
               <Text
                 style={[
@@ -129,7 +149,7 @@ export function StartListResultsTable({
                   { color: subTextColor, borderColor },
                 ]}
               >
-                {result.category || "-"}
+                -
               </Text>
               {!isUpcoming && (
                 <Text
@@ -139,7 +159,9 @@ export function StartListResultsTable({
                     { color: textColor, borderColor },
                   ]}
                 >
-                  {result.finish_time || "-"}
+                  {result.finish_time100
+                    ? formatTime(result.finish_time100)
+                    : "-"}
                 </Text>
               )}
             </View>

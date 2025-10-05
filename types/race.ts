@@ -17,6 +17,39 @@ export type SportType = (typeof SPORT_TYPES)[keyof typeof SPORT_TYPES];
 export type RaceStatus = (typeof RACE_STATUSES)[keyof typeof RACE_STATUSES];
 
 /**
+ * Sex type for athlete categorization
+ */
+export type Sex = "male" | "female" | "other";
+
+/**
+ * Sex category ID constants used by SexPicker and other components
+ */
+export const SEX_CATEGORY_IDS = {
+  MALE: 1,
+  FEMALE: 2,
+  OTHER: 3,
+} as const;
+
+/**
+ * Type for sex category ID values
+ */
+export type SexCategoryId =
+  (typeof SEX_CATEGORY_IDS)[keyof typeof SEX_CATEGORY_IDS];
+
+/**
+ * Age category interface for race athlete categorization
+ * Maps to race_athlete_categories database table
+ */
+export interface AgeCategory {
+  id: number;
+  name: string;
+  description: string;
+  sex: Sex;
+  minAge: number;
+  maxAge: number | null; // null means no upper limit (e.g., 70+)
+}
+
+/**
  * Base public race event row from database with enhanced typing
  * Extends the auto-generated Supabase type with our custom enum types
  */
@@ -161,7 +194,7 @@ export interface CreateRaceEventPayload {
   race_status?: RaceStatus;
   race_start_date?: string | null;
   race_started_at_local?: string | null;
-  distance1000?: number | null; // Distance in meters
+  distance?: number | null; // Distance in meters
   registration_url?: string | null;
   image?: string | null;
 }
@@ -180,4 +213,37 @@ export interface RaceEventFilters {
   start_date_from?: string; // ISO date string
   start_date_to?: string; // ISO date string
   search_text?: string; // Search in title and description
+}
+
+/**
+ * Start list entry data for creating a race participant
+ * Combines data for both race_start_list_results and race_start_list_athlete_personal tables
+ */
+export interface StartListEntryData {
+  // From race_start_list_results
+  first_name: string;
+  last_name: string;
+  race_number: number;
+  public_race_event_id: string;
+  sex_category_id?: number | null; // Reference to race_athlete_categories for sex category
+  age_category_id?: number | null; // Reference to race_athlete_categories for age category
+  // From race_start_list_athlete_personal
+  month_of_birth?: number | null;
+  year_of_birth?: number | null;
+  email?: string | null;
+}
+
+/**
+ * Start list entry insert type for API operations
+ */
+export interface StartListEntryInsert {
+  first_name: string;
+  last_name: string;
+  race_number: number;
+  public_race_event_id: string;
+  sex_category_id?: number | null;
+  age_category_id?: number | null;
+  month_of_birth?: number | null;
+  year_of_birth?: number | null;
+  email?: string | null;
 }

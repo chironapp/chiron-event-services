@@ -1,3 +1,5 @@
+import type { AgeCategory, Sex } from "@/types/race";
+
 /**
  * Race type constants for database enum values
  * Matches the smallint enum in the database where 1=individual, 2=relay
@@ -206,3 +208,271 @@ export const RACE_STATUS_OPTIONS = [
     label: RACE_STATUS_LABELS[RACE_STATUSES.CANCELLED],
   },
 ] as const;
+
+/**
+ * Age category definitions based on race_athlete_categories table
+ * Age is calculated as of 31st December in the year of competition
+ */
+export const AGE_CATEGORIES: Record<Sex, AgeCategory[]> = {
+  female: [
+    {
+      id: 4,
+      name: "F U18",
+      description:
+        "Female of 17 years or younger on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 0,
+      maxAge: 17,
+    },
+    {
+      id: 5,
+      name: "F U20",
+      description:
+        "Female of 18 or 19 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 18,
+      maxAge: 19,
+    },
+    {
+      id: 6,
+      name: "F 20-24",
+      description:
+        "Female of 20 to 24 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 20,
+      maxAge: 24,
+    },
+    {
+      id: 7,
+      name: "F 25-29",
+      description:
+        "Female of 25 to 29 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 25,
+      maxAge: 29,
+    },
+    {
+      id: 8,
+      name: "F 30-34",
+      description:
+        "Female of 30 to 34 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 30,
+      maxAge: 34,
+    },
+    {
+      id: 9,
+      name: "F 35-39",
+      description:
+        "Female of 35 to 39 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 35,
+      maxAge: 39,
+    },
+    {
+      id: 10,
+      name: "F 40-44",
+      description:
+        "Female of 40 to 44 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 40,
+      maxAge: 44,
+    },
+    {
+      id: 11,
+      name: "F 45-49",
+      description:
+        "Female of 45 to 49 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 45,
+      maxAge: 49,
+    },
+    {
+      id: 12,
+      name: "F 50-54",
+      description:
+        "Female of 50 to 54 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 50,
+      maxAge: 54,
+    },
+    {
+      id: 13,
+      name: "F 55-59",
+      description:
+        "Female of 55 to 59 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 55,
+      maxAge: 59,
+    },
+    {
+      id: 14,
+      name: "F 60-64",
+      description:
+        "Female of 60 to 64 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 60,
+      maxAge: 64,
+    },
+    {
+      id: 15,
+      name: "F 65-69",
+      description:
+        "Female of 65 to 69 years on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 65,
+      maxAge: 69,
+    },
+    {
+      id: 16,
+      name: "F 70+",
+      description:
+        "Female of 70 years or older on 31st December in the year of the competition",
+      sex: "female",
+      minAge: 70,
+      maxAge: null,
+    },
+  ],
+  male: [
+    {
+      id: 17,
+      name: "M U18",
+      description:
+        "Male of 17 years or younger on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 0,
+      maxAge: 17,
+    },
+    {
+      id: 18,
+      name: "M U20",
+      description:
+        "Male of 18 or 19 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 18,
+      maxAge: 19,
+    },
+    {
+      id: 19,
+      name: "M 20-24",
+      description:
+        "Male of 20 to 24 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 20,
+      maxAge: 24,
+    },
+    {
+      id: 20,
+      name: "M 25-29",
+      description:
+        "Male of 25 to 29 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 25,
+      maxAge: 29,
+    },
+    {
+      id: 21,
+      name: "M 30-34",
+      description:
+        "Male of 30 to 34 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 30,
+      maxAge: 34,
+    },
+    {
+      id: 22,
+      name: "M 35-39",
+      description:
+        "Male of 35 to 39 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 35,
+      maxAge: 39,
+    },
+    {
+      id: 23,
+      name: "M 40-44",
+      description:
+        "Male of 40 to 44 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 40,
+      maxAge: 44,
+    },
+    {
+      id: 24,
+      name: "M 45-49",
+      description:
+        "Male of 45 to 49 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 45,
+      maxAge: 49,
+    },
+    {
+      id: 25,
+      name: "M 50-54",
+      description:
+        "Male of 50 to 54 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 50,
+      maxAge: 54,
+    },
+    {
+      id: 26,
+      name: "M 55-59",
+      description:
+        "Male of 55 to 59 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 55,
+      maxAge: 59,
+    },
+    {
+      id: 27,
+      name: "M 60-64",
+      description:
+        "Male of 60 to 64 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 60,
+      maxAge: 64,
+    },
+    {
+      id: 28,
+      name: "M 65-69",
+      description:
+        "Male of 65 to 69 years on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 65,
+      maxAge: 69,
+    },
+    {
+      id: 29,
+      name: "M 70+",
+      description:
+        "Male of 70 years or older on 31st December in the year of the competition",
+      sex: "male",
+      minAge: 70,
+      maxAge: null,
+    },
+  ],
+  other: [
+    {
+      id: 30,
+      name: "Other",
+      description: "Non-binary athlete of any age",
+      sex: "other",
+      minAge: 0,
+      maxAge: null,
+    },
+  ],
+};
+
+/**
+ * Flattened array of all age categories for easy lookup
+ */
+export const ALL_AGE_CATEGORIES = Object.values(AGE_CATEGORIES).flat();
+
+/**
+ * Map of category ID to category for quick lookups
+ */
+export const AGE_CATEGORY_MAP = ALL_AGE_CATEGORIES.reduce((map, category) => {
+  map[category.id] = category;
+  return map;
+}, {} as Record<number, AgeCategory>);

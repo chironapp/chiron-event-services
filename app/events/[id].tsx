@@ -1,26 +1,26 @@
-import Footer from "@/components/Footer";
+import { fetchEventById, type RaceEventWithOrganiser } from "@/api/events";
+import { fetchRaceResults } from "@/api/results";
 import EventTopNav from "@/components/EventTopNav";
+import Footer from "@/components/Footer";
 import { SearchBar } from "@/components/events";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import NoResultsFound from "@/components/ui/NoResultsFound";
 import { StartListResultsTable } from "@/components/ui/StartListResultsTable";
+import { RACE_STATUS_LABELS } from "@/constants/raceTypes";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import type { RaceStartListResult } from "@/lib/supabase";
+import { isUpcoming } from "@/utils/eventFilters";
 import { Stack, useLocalSearchParams } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
-  View,
-  ActivityIndicator,
-  Linking,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { fetchEventById, type RaceEventWithOrganiser } from "@/api/events";
-import { fetchRaceResults } from "@/api/results";
-import type { RaceStartListResult } from "@/lib/supabase";
-import { isUpcoming } from "@/utils/eventFilters";
-import { RACE_STATUS_LABELS } from "@/constants/raceTypes";
 
 /**
  * Event details page component showing event information
@@ -82,7 +82,7 @@ export default function EventDetailsPage() {
           page: resultsPage,
           limit: 50,
           search: searchQuery,
-          sortBy: isUpcoming(event) ? "bib_number" : "position",
+          sortBy: isUpcoming(event) ? "race_number" : "position",
           sortOrder: "asc",
         });
 
@@ -268,7 +268,7 @@ export default function EventDetailsPage() {
             <SearchBar
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholder="Bib number or athlete name"
+              placeholder="Race number or athlete name"
             />
 
             <Text
@@ -325,15 +325,15 @@ export default function EventDetailsPage() {
                   searchQuery
                     ? "No Results Found"
                     : eventIsUpcoming
-                      ? "Start List Not Yet Available"
-                      : "Results Not Yet Available"
+                    ? "Start List Not Yet Available"
+                    : "Results Not Yet Available"
                 }
                 message={
                   searchQuery
                     ? `No entries match "${searchQuery}"`
                     : eventIsUpcoming
-                      ? "The start list for this event will be available closer to the race date."
-                      : "Results will be posted after the race is completed."
+                    ? "The start list for this event will be available closer to the race date."
+                    : "Results will be posted after the race is completed."
                 }
               />
             )}

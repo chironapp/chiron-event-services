@@ -1,5 +1,5 @@
-import type { PublicRaceEvent } from "../types/race";
 import { supabase } from "../lib/supabase";
+import type { PublicRaceEvent } from "../types/race";
 
 /**
  * API functions for fetching race event data from Supabase
@@ -74,10 +74,8 @@ export async function fetchEvents(
     const offset = (page - 1) * limit;
 
     // Build the base query
-    let query = supabase
-      .from("public_race_events")
-      .select(
-        `
+    let query = supabase.from("public_race_events").select(
+      `
         id,
         title,
         description,
@@ -87,7 +85,7 @@ export async function fetchEvents(
         race_status,
         registration_url,
         image,
-        distance1000,
+        distance,
         created_at,
         updated_at,
         organisers (
@@ -96,8 +94,8 @@ export async function fetchEvents(
           logo
         )
       `,
-        { count: "exact" }
-      );
+      { count: "exact" }
+    );
 
     // Add organiser filter if provided
     if (organiserId) {
@@ -106,9 +104,7 @@ export async function fetchEvents(
 
     // Add search filter if provided
     if (search.trim()) {
-      query = query.or(
-        `title.ilike.%${search}%,description.ilike.%${search}%`
-      );
+      query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
     }
 
     // Add sorting
@@ -168,7 +164,7 @@ export async function fetchEventById(
         race_status,
         registration_url,
         image,
-        distance1000,
+        distance,
         created_at,
         updated_at,
         organisers (

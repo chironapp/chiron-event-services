@@ -43,14 +43,17 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
-          distance1000: number | null
+          distance: number | null
           id: string
           image: string | null
+          include_teams: boolean
           organiser_id: string
           race_start_date: string | null
           race_started_at_local: string | null
           race_status: string | null
           race_type: number
+          record_age_category: boolean
+          record_sex_category: boolean
           registration_url: string | null
           sport_type: number
           title: string | null
@@ -59,14 +62,17 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
-          distance1000?: number | null
+          distance?: number | null
           id?: string
           image?: string | null
+          include_teams?: boolean
           organiser_id: string
           race_start_date?: string | null
           race_started_at_local?: string | null
           race_status?: string | null
           race_type?: number
+          record_age_category?: boolean
+          record_sex_category?: boolean
           registration_url?: string | null
           sport_type?: number
           title?: string | null
@@ -75,14 +81,17 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
-          distance1000?: number | null
+          distance?: number | null
           id?: string
           image?: string | null
+          include_teams?: boolean
           organiser_id?: string
           race_start_date?: string | null
           race_started_at_local?: string | null
           race_status?: string | null
           race_type?: number
+          record_age_category?: boolean
+          record_sex_category?: boolean
           registration_url?: string | null
           sport_type?: number
           title?: string | null
@@ -157,48 +166,90 @@ export type Database = {
         }
         Relationships: []
       }
-      race_start_list_results: {
+            race_start_list_results: {
         Row: {
-          id: string
-          public_race_event_id: string
-          bib_number: string | null
-          athlete_name: string | null
-          category: string | null
-          finish_time: string | null
-          position: number | null
+          age_category_id: number | null
+          age_category_position: number | null
           created_at: string
+          finish_time100: number | null
+          first_name: string
+          id: string
+          last_name: string
+          net_finish_time100: number | null
+          net_started_at_local: string | null
+          position: number | null
+          public_race_event_id: string
+          race_number: number
+          sex_category_id: number | null
+          sex_category_position: number | null
+          team_id: string | null
           updated_at: string
         }
         Insert: {
-          id?: string
-          public_race_event_id: string
-          bib_number?: string | null
-          athlete_name?: string | null
-          category?: string | null
-          finish_time?: string | null
-          position?: number | null
+          age_category_id?: number | null
+          age_category_position?: number | null
           created_at?: string
+          finish_time100?: number | null
+          first_name: string
+          id?: string
+          last_name: string
+          net_finish_time100?: number | null
+          net_started_at_local?: string | null
+          position?: number | null
+          public_race_event_id: string
+          race_number: number
+          sex_category_id?: number | null
+          sex_category_position?: number | null
+          team_id?: string | null
           updated_at?: string
         }
         Update: {
-          id?: string
-          public_race_event_id?: string
-          bib_number?: string | null
-          athlete_name?: string | null
-          category?: string | null
-          finish_time?: string | null
-          position?: number | null
+          age_category_id?: number | null
+          age_category_position?: number | null
           created_at?: string
+          finish_time100?: number | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          net_finish_time100?: number | null
+          net_started_at_local?: string | null
+          position?: number | null
+          public_race_event_id?: string
+          race_number?: number
+          sex_category_id?: number | null
+          sex_category_position?: number | null
+          team_id?: string | null
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "race_start_list_results_age_category_id_fkey"
+            columns: ["age_category_id"]
+            isOneToOne: false
+            referencedRelation: "race_athlete_categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "race_start_list_results_public_race_event_id_fkey"
             columns: ["public_race_event_id"]
             isOneToOne: false
             referencedRelation: "public_race_events"
             referencedColumns: ["id"]
-          }
+          },
+          {
+            foreignKeyName: "race_start_list_results_sex_category_id_fkey"
+            columns: ["sex_category_id"]
+            isOneToOne: false
+            referencedRelation: "race_athlete_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_start_list_results_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "race_teams"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
