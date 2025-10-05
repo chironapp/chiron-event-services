@@ -118,3 +118,4 @@ export type RaceAthleteCategory = Tables["race_athlete_categories"]["Row"];
 export type RaceAthleteCategoryCollection =
   Tables["race_athlete_category_collections"]["Row"];
 export type RaceStartListResult = Tables["race_start_list_results"]["Row"];
+export type RaceTeam = Tables["race_teams"]["Row"];

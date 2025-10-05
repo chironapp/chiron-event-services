@@ -1,5 +1,8 @@
 import { fetchEventById, type RaceEventWithOrganiser } from "@/api/events";
-import { fetchRaceResults } from "@/api/results";
+import {
+  fetchRaceResults,
+  type RaceStartListResultWithCategories,
+} from "@/api/results";
 import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
 import { SearchBar } from "@/components/events";
@@ -8,7 +11,7 @@ import NoResultsFound from "@/components/ui/NoResultsFound";
 import { StartListResultsTable } from "@/components/ui/StartListResultsTable";
 import { RACE_STATUS_LABELS } from "@/constants/raceTypes";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import type { RaceStartListResult } from "@/lib/supabase";
+
 import { isUpcoming } from "@/utils/eventFilters";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -35,7 +38,9 @@ export default function EventDetailsPage() {
   const [event, setEvent] = useState<RaceEventWithOrganiser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [results, setResults] = useState<RaceStartListResult[]>([]);
+  const [results, setResults] = useState<RaceStartListResultWithCategories[]>(
+    []
+  );
   const [resultsLoading, setResultsLoading] = useState(false);
   const [resultsPage, setResultsPage] = useState(1);
   const [resultsCount, setResultsCount] = useState(0);

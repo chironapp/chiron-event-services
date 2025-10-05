@@ -47,6 +47,7 @@ export type Database = {
           id: string
           image: string | null
           include_teams: boolean
+          location: string | null
           organiser_id: string
           race_start_date: string | null
           race_started_at_local: string | null
@@ -66,6 +67,7 @@ export type Database = {
           id?: string
           image?: string | null
           include_teams?: boolean
+          location?: string | null
           organiser_id: string
           race_start_date?: string | null
           race_started_at_local?: string | null
@@ -85,6 +87,7 @@ export type Database = {
           id?: string
           image?: string | null
           include_teams?: boolean
+          location?: string | null
           organiser_id?: string
           race_start_date?: string | null
           race_started_at_local?: string | null
@@ -248,6 +251,38 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "race_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+            race_teams: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          public_race_event_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          public_race_event_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          public_race_event_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_teams_public_race_event_id_fkey"
+            columns: ["public_race_event_id"]
+            isOneToOne: false
+            referencedRelation: "public_race_events"
             referencedColumns: ["id"]
           },
         ]

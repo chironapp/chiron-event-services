@@ -1,6 +1,13 @@
 import type { RaceStartListResult } from "../lib/supabase";
 import { supabase } from "../lib/supabase";
 
+// Extended type to include joined category and team data
+export type RaceStartListResultWithCategories = RaceStartListResult & {
+  age_category: { name: string } | null;
+  sex_category: { name: string } | null;
+  team: { name: string } | null;
+};
+
 /**
  * API functions for fetching race start list and results data from Supabase
  * Provides paginated results and error handling
@@ -16,7 +23,7 @@ export interface FetchResultsParams {
 }
 
 export interface FetchResultsResponse {
-  data: RaceStartListResult[];
+  data: RaceStartListResultWithCategories[];
   count: number;
   page: number;
   limit: number;
@@ -63,10 +70,18 @@ export async function fetchRaceResults(
     // Calculate pagination offset
     const offset = (page - 1) * limit;
 
-    // Build the base query
+    // Build the base query with category and team joins
     let query = supabase
       .from("race_start_list_results")
-      .select("*", { count: "exact" })
+      .select(
+        `
+        *,
+        age_category:race_athlete_categories!race_start_list_results_age_category_id_fkey(name),
+        sex_category:race_athlete_categories!race_start_list_results_sex_category_id_fkey(name),
+        team:race_teams(name)
+      `,
+        { count: "exact" }
+      )
       .eq("public_race_event_id", eventId);
 
     // Add search filter if provided
@@ -96,7 +111,7 @@ export async function fetchRaceResults(
     const hasPreviousPage = page > 1;
 
     return {
-      data: (data || []) as RaceStartListResult[],
+      data: (data || []) as RaceStartListResultWithCategories[],
       count: totalCount,
       page,
       limit,
