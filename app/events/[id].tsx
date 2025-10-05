@@ -3,6 +3,7 @@ import EventTopNav from "@/components/EventTopNav";
 import { SearchBar } from "@/components/events";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import NoResultsFound from "@/components/ui/NoResultsFound";
+import { StartListResultsTable } from "@/components/ui/StartListResultsTable";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useState, useEffect } from "react";
@@ -16,6 +17,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { fetchEventById, type RaceEventWithOrganiser } from "@/api/events";
+import { fetchRaceResults } from "@/api/results";
+import type { RaceStartListResult } from "@/lib/supabase";
 import { isUpcoming } from "@/utils/eventFilters";
 import { RACE_STATUS_LABELS } from "@/constants/raceTypes";
 
@@ -32,6 +35,11 @@ export default function EventDetailsPage() {
   const [event, setEvent] = useState<RaceEventWithOrganiser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [results, setResults] = useState<RaceStartListResult[]>([]);
+  const [resultsLoading, setResultsLoading] = useState(false);
+  const [resultsPage, setResultsPage] = useState(1);
+  const [resultsCount, setResultsCount] = useState(0);
+  const [hasMoreResults, setHasMoreResults] = useState(false);
 
   // Fetch event on component mount
   useEffect(() => {
@@ -60,6 +68,39 @@ export default function EventDetailsPage() {
 
     loadEvent();
   }, [id]);
+
+  // Fetch race results when event is loaded or search query changes
+  useEffect(() => {
+    async function loadResults() {
+      if (!id || !event) return;
+
+      try {
+        setResultsLoading(true);
+
+        const resultsData = await fetchRaceResults({
+          eventId: id,
+          page: resultsPage,
+          limit: 50,
+          search: searchQuery,
+          sortBy: isUpcoming(event) ? "bib_number" : "position",
+          sortOrder: "asc",
+        });
+
+        setResults(resultsData.data);
+        setResultsCount(resultsData.count);
+        setHasMoreResults(resultsData.hasNextPage);
+      } catch (err) {
+        console.error("Error loading results:", err);
+        // Don't show error for missing results, just show empty state
+        setResults([]);
+        setResultsCount(0);
+      } finally {
+        setResultsLoading(false);
+      }
+    }
+
+    loadResults();
+  }, [id, event, searchQuery, resultsPage]);
 
   // Format the date
   const formatDate = (dateString: string | null) => {
@@ -239,18 +280,63 @@ export default function EventDetailsPage() {
               {eventIsUpcoming ? "Start List" : "Results"}
             </Text>
 
-            <NoResultsFound
-              title={
-                eventIsUpcoming
-                  ? "Start List Not Yet Available"
-                  : "Results Not Yet Available"
-              }
-              message={
-                eventIsUpcoming
-                  ? "The start list for this event will be available closer to the race date."
-                  : "Results will be posted after the race is completed."
-              }
-            />
+            {resultsLoading ? (
+              <View style={styles.resultsLoadingContainer}>
+                <ActivityIndicator
+                  size="small"
+                  color={isDark ? "#ffffff" : "#000000"}
+                />
+                <Text
+                  style={[
+                    styles.resultsLoadingText,
+                    { color: isDark ? "#cccccc" : "#666666" },
+                  ]}
+                >
+                  Loading {eventIsUpcoming ? "start list" : "results"}...
+                </Text>
+              </View>
+            ) : resultsCount > 0 ? (
+              <>
+                <Text
+                  style={[
+                    styles.resultsCount,
+                    { color: isDark ? "#cccccc" : "#666666" },
+                  ]}
+                >
+                  {resultsCount} {resultsCount === 1 ? "entry" : "entries"}
+                </Text>
+                <StartListResultsTable
+                  results={results}
+                  isUpcoming={eventIsUpcoming}
+                  isDark={isDark}
+                />
+                {hasMoreResults && (
+                  <TouchableOpacity
+                    style={styles.loadMoreButton}
+                    onPress={() => setResultsPage(resultsPage + 1)}
+                  >
+                    <Text style={styles.loadMoreButtonText}>Load More</Text>
+                  </TouchableOpacity>
+                )}
+              </>
+            ) : (
+              <NoResultsFound
+                title={
+                  searchQuery
+                    ? "No Results Found"
+                    : eventIsUpcoming
+                      ? "Start List Not Yet Available"
+                      : "Results Not Yet Available"
+                }
+                message={
+                  searchQuery
+                    ? `No entries match "${searchQuery}"`
+                    : eventIsUpcoming
+                      ? "The start list for this event will be available closer to the race date."
+                      : "Results will be posted after the race is completed."
+                }
+              />
+            )}
 
             <Footer />
           </MaxWidthContainer>
@@ -307,6 +393,31 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginTop: 24,
     marginBottom: 16,
+  },
+  resultsLoadingContainer: {
+    padding: 20,
+    alignItems: "center",
+  },
+  resultsLoadingText: {
+    marginTop: 8,
+    fontSize: 14,
+  },
+  resultsCount: {
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  loadMoreButton: {
+    backgroundColor: "#2196F3",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginTop: 16,
+    alignItems: "center",
+  },
+  loadMoreButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
   },
   loadingContainer: {
     flex: 1,
