@@ -97,7 +97,7 @@ export default function RaceEventCard({ event }: RaceEventCardProps) {
               { color: isDark ? "#cccccc" : "#666666" },
             ]}
           >
-            📅 {formatDate(event.race_start_date)}
+            {formatDate(event.race_start_date)}
           </Text>
           <Text
             style={[
@@ -105,46 +105,18 @@ export default function RaceEventCard({ event }: RaceEventCardProps) {
               { color: isDark ? "#cccccc" : "#666666" },
             ]}
           >
-            🏃 {sportLabel}
+            Location TBA
           </Text>
-          {event.distance && (
-            <Text
-              style={[
-                styles.detailText,
-                { color: isDark ? "#cccccc" : "#666666" },
-              ]}
-            >
-              📏{" "}
-              {(event.distance / 1000).toFixed(
-                event.distance % 1000 === 0 ? 0 : 1
-              )}
-              km
-            </Text>
-          )}
-          {event.organisers && (
-            <Text
-              style={[
-                styles.detailText,
-                { color: isDark ? "#cccccc" : "#666666" },
-              ]}
-            >
-              🏢 {event.organisers.name}
-            </Text>
-          )}
-        </View>
-
-        {/* Description */}
-        {event.description && (
           <Text
             style={[
-              styles.eventDescription,
+              styles.detailText,
               { color: isDark ? "#cccccc" : "#666666" },
             ]}
-            numberOfLines={3}
           >
-            {event.description}
+            {sportLabel}
+            {event.distance && ` | ${(event.distance / 1000).toFixed(event.distance % 1000 === 0 ? 0 : 1)}km`}
           </Text>
-        )}
+        </View>
       </Pressable>
     </Link>
   );
@@ -191,10 +163,5 @@ const styles = StyleSheet.create({
   detailText: {
     fontSize: 14,
     lineHeight: 20,
-  },
-  eventDescription: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 4,
   },
 });
