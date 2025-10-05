@@ -157,6 +157,50 @@ export type Database = {
         }
         Relationships: []
       }
+      race_start_list_results: {
+        Row: {
+          id: string
+          public_race_event_id: string
+          bib_number: string | null
+          athlete_name: string | null
+          category: string | null
+          finish_time: string | null
+          position: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          public_race_event_id: string
+          bib_number?: string | null
+          athlete_name?: string | null
+          category?: string | null
+          finish_time?: string | null
+          position?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          public_race_event_id?: string
+          bib_number?: string | null
+          athlete_name?: string | null
+          category?: string | null
+          finish_time?: string | null
+          position?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_start_list_results_public_race_event_id_fkey"
+            columns: ["public_race_event_id"]
+            isOneToOne: false
+            referencedRelation: "public_race_events"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
