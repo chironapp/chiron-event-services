@@ -6,6 +6,15 @@ import { supabase } from "../lib/supabase";
  * Provides paginated results and error handling
  */
 
+/**
+ * Extended race start list result with joined data
+ */
+export interface RaceStartListResultWithCategories extends RaceStartListResult {
+  sex_category_name?: string | null;
+  age_category_name?: string | null;
+  team_name?: string | null;
+}
+
 export interface FetchResultsParams {
   page?: number;
   limit?: number;
@@ -16,7 +25,7 @@ export interface FetchResultsParams {
 }
 
 export interface FetchResultsResponse {
-  data: RaceStartListResult[];
+  data: RaceStartListResultWithCategories[];
   count: number;
   page: number;
   limit: number;
@@ -63,10 +72,18 @@ export async function fetchRaceResults(
     // Calculate pagination offset
     const offset = (page - 1) * limit;
 
-    // Build the base query
+    // Build the base query with joins for categories
+    // Use left joins to include results even if categories are not set
     let query = supabase
       .from("race_start_list_results")
-      .select("*", { count: "exact" })
+      .select(
+        `
+        *,
+        sex_category:race_athlete_categories!sex_category_id(name),
+        age_category:race_athlete_categories!age_category_id(name)
+      `,
+        { count: "exact" }
+      )
       .eq("public_race_event_id", eventId);
 
     // Add search filter if provided
@@ -89,6 +106,14 @@ export async function fetchRaceResults(
       throw new Error(`Failed to fetch results: ${error.message}`);
     }
 
+    // Transform the data to flatten the joined category names
+    const transformedData = (data || []).map((result: any) => ({
+      ...result,
+      sex_category_name: result.sex_category?.name || null,
+      age_category_name: result.age_category?.name || null,
+      team_name: null, // Team data not available in current schema
+    }));
+
     // Calculate pagination metadata
     const totalCount = count || 0;
     const totalPages = Math.ceil(totalCount / limit);
@@ -96,7 +121,7 @@ export async function fetchRaceResults(
     const hasPreviousPage = page > 1;
 
     return {
-      data: (data || []) as RaceStartListResult[],
+      data: transformedData as RaceStartListResultWithCategories[],
       count: totalCount,
       page,
       limit,

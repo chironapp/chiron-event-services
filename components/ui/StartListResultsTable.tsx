@@ -1,4 +1,5 @@
-import type { RaceStartListResult } from "@/lib/supabase";
+import type { RaceStartListResultWithCategories } from "@/api/results";
+import { capitalizeFirst, getFullName } from "@/utils/nameUtils";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -23,7 +24,7 @@ function formatTime(centiseconds: number | null): string {
 }
 
 interface StartListResultsTableProps {
-  results: RaceStartListResult[];
+  results: RaceStartListResultWithCategories[];
   isUpcoming: boolean;
   isDark?: boolean;
 }
@@ -133,24 +134,38 @@ export function StartListResultsTable({
               >
                 {result.race_number || "-"}
               </Text>
-              <Text
+              <View
                 style={[
                   styles.cell,
                   styles.nameCell,
-                  { color: textColor, borderColor },
+                  { borderColor },
                 ]}
               >
-                {`${result.first_name} ${result.last_name}`.trim() || "Unknown"}
-              </Text>
-              <Text
+                <Text style={{ color: textColor }}>
+                  {getFullName(result.first_name, result.last_name) || "Unknown"}
+                </Text>
+                {result.team_name && (
+                  <Text style={[styles.subText, { color: subTextColor }]}>
+                    {result.team_name}
+                  </Text>
+                )}
+              </View>
+              <View
                 style={[
                   styles.cell,
                   styles.categoryCell,
-                  { color: subTextColor, borderColor },
+                  { borderColor },
                 ]}
               >
-                -
-              </Text>
+                <Text style={[styles.categoryText, { color: subTextColor }]}>
+                  {capitalizeFirst(result.sex_category_name || "") || "-"}
+                </Text>
+                {result.age_category_name && (
+                  <Text style={[styles.subText, { color: subTextColor }]}>
+                    {result.age_category_name}
+                  </Text>
+                )}
+              </View>
               {!isUpcoming && (
                 <Text
                   style={[
@@ -217,6 +232,14 @@ const styles = StyleSheet.create({
   },
   timeCell: {
     width: 120,
+    textAlign: "center",
+  },
+  subText: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  categoryText: {
+    fontSize: 12,
     textAlign: "center",
   },
 });
