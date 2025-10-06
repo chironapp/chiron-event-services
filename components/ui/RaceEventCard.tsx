@@ -1,13 +1,11 @@
 import type { RaceEventWithOrganiser } from "@/api/events";
-import {
-  RACE_STATUS_COLORS,
-  RACE_STATUS_LABELS,
-  SPORT_TYPE_LABELS,
-} from "@/constants/raceTypes";
+import { SPORT_TYPE_LABELS } from "@/constants/raceTypes";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { formatEventDate } from "@/utils/dateUtils";
 import { Link } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import RaceStatusBadge from "./RaceStatusBadge";
 
 interface RaceEventCardProps {
   /**
@@ -27,27 +25,6 @@ interface RaceEventCardProps {
 export default function RaceEventCard({ event }: RaceEventCardProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-
-  // Format the date
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "Date TBA";
-    const date = new Date(dateString);
-    const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
-    const day = date.getDate();
-    const month = date.toLocaleDateString("en-US", { month: "long" });
-    const year = date.getFullYear();
-    return `${weekday} ${day} ${month} ${year}`;
-  };
-
-  // Get status color
-  const statusColor = event.race_status
-    ? RACE_STATUS_COLORS[event.race_status]
-    : "#757575";
-
-  // Get status label
-  const statusLabel = event.race_status
-    ? RACE_STATUS_LABELS[event.race_status]
-    : "Unknown";
 
   // Get sport type label
   const sportLabel = SPORT_TYPE_LABELS[event.sport_type] || "Other";
@@ -86,19 +63,10 @@ export default function RaceEventCard({ event }: RaceEventCardProps) {
                 { color: isDark ? "#cccccc" : "#666666" },
               ]}
             >
-              {formatDate(event.race_start_date)}
+              {formatEventDate(event.race_start_date)}
             </Text>
             {/* Status Badge */}
-            <View
-              style={[
-                styles.statusBadge,
-                {
-                  backgroundColor: statusColor,
-                },
-              ]}
-            >
-              <Text style={styles.statusText}>{statusLabel}</Text>
-            </View>
+            <RaceStatusBadge raceStatus={event.race_status} />
           </View>
           <Text
             style={[
@@ -151,16 +119,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  statusText: {
-    color: "#ffffff",
-    fontSize: 12,
-    fontWeight: "600",
   },
   detailText: {
     fontSize: 14,
