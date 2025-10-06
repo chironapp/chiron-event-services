@@ -8,9 +8,10 @@ import Footer from "@/components/Footer";
 import { SearchBar } from "@/components/events";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import NoResultsFound from "@/components/ui/NoResultsFound";
+import RaceStatusBadge from "@/components/ui/RaceStatusBadge";
 import { StartListResultsTable } from "@/components/ui/StartListResultsTable";
-import { RACE_STATUS_LABELS } from "@/constants/raceTypes";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { formatEventDate } from "@/utils/dateUtils";
 
 import { isUpcoming } from "@/utils/eventFilters";
 import { Stack, useLocalSearchParams } from "expo-router";
@@ -107,17 +108,6 @@ export default function EventDetailsPage() {
     loadResults();
   }, [id, event, searchQuery, resultsPage]);
 
-  // Format the date
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "Date TBD";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   // Show loading state while fetching event
   if (loading && !event) {
     return (
@@ -185,9 +175,6 @@ export default function EventDetailsPage() {
   }
 
   const eventIsUpcoming = isUpcoming(event);
-  const raceStatusLabel = event.race_status
-    ? RACE_STATUS_LABELS[event.race_status]
-    : "Unknown";
 
   return (
     <>
@@ -220,43 +207,39 @@ export default function EventDetailsPage() {
               {event.title}
             </Text>
 
-            <View style={styles.eventInfoContainer}>
+            <View style={styles.dateLocationRow}>
               <Text
                 style={[
-                  styles.infoLabel,
+                  styles.dateLocationText,
                   { color: isDark ? "#cccccc" : "#666666" },
                 ]}
               >
-                Event Date:
+                {formatEventDate(event.race_start_date)}
               </Text>
-              <Text
-                style={[
-                  styles.infoValue,
-                  { color: isDark ? "#ffffff" : "#000000" },
-                ]}
-              >
-                {formatDate(event.race_start_date)}
-              </Text>
+              <RaceStatusBadge raceStatus={event.race_status} />
             </View>
 
-            <View style={styles.eventInfoContainer}>
+            {event.location && (
               <Text
                 style={[
-                  styles.infoLabel,
+                  styles.dateLocationText,
                   { color: isDark ? "#cccccc" : "#666666" },
                 ]}
               >
-                Race Status:
+                {event.location}
               </Text>
+            )}
+
+            {event.description && (
               <Text
                 style={[
-                  styles.infoValue,
-                  { color: isDark ? "#ffffff" : "#000000" },
+                  styles.description,
+                  { color: isDark ? "#e0e0e0" : "#333333" },
                 ]}
               >
-                {raceStatusLabel}
+                {event.description}
               </Text>
-            </View>
+            )}
 
             {event.race_status === "registration_open" &&
               event.registration_url && (
@@ -365,19 +348,24 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 16,
     textAlign: "center",
   },
-  eventInfoContainer: {
-    marginBottom: 12,
+  dateLocationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 8,
   },
-  infoLabel: {
-    fontSize: 14,
-    marginBottom: 4,
+  dateLocationText: {
+    fontSize: 16,
+    lineHeight: 24,
   },
-  infoValue: {
-    fontSize: 18,
-    fontWeight: "600",
+  description: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginTop: 16,
+    marginBottom: 8,
   },
   registrationButton: {
     backgroundColor: "#4CAF50",

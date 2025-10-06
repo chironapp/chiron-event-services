@@ -86,6 +86,7 @@ export async function fetchEvents(
         registration_url,
         image,
         distance,
+        location,
         created_at,
         updated_at,
         organisers (
@@ -165,6 +166,7 @@ export async function fetchEventById(
         registration_url,
         image,
         distance,
+        location,
         created_at,
         updated_at,
         organisers (
