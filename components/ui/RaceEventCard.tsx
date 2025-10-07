@@ -74,7 +74,7 @@ export default function RaceEventCard({ event }: RaceEventCardProps) {
               { color: isDark ? "#cccccc" : "#666666" },
             ]}
           >
-            Location TBA
+            {event.location || "Location TBA"}
           </Text>
           <Text
             style={[
