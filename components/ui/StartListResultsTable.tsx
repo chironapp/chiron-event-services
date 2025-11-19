@@ -1,12 +1,47 @@
+/**
+ * StartListResultsTable2 - Responsive table component for race results
+ *
+ * This is an improved version of StartListResultsTable with responsive design.
+ * Test this component at app/events/[id]/test1.tsx
+ */
+
 import type { RaceStartListResultWithCategories } from "@/api/results";
-import { formatTime } from "@/utils/dateUtils";
+import { Colors } from "@/constants/theme";
 import { capitalizeFirst, getNameWithRaceNumber } from "@/utils/nameUtils";
 import { getTeamOrder } from "@/utils/relayRaceUtils";
+import { Link } from "expo-router";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 
+/**
+ * Format time from centiseconds to readable format (HH:MM:SS or MM:SS)
+ */
+function formatTime(centiseconds: number | null): string {
+  if (!centiseconds) return "-";
+
+  const totalSeconds = Math.floor(centiseconds / 100);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
+  } else {
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  }
+}
 
 interface StartListResultsTableProps {
+  eventId: string;
   results: RaceStartListResultWithCategories[];
   isUpcoming: boolean;
   isDark?: boolean;
@@ -14,26 +49,51 @@ interface StartListResultsTableProps {
 }
 
 /**
- * Table component to display race start list or results
+ * Responsive table component to display race start list or results.
+ * Uses responsive width calculations to adapt from desktop (~1000px) to mobile widths.
+ * Automatically hides the category column on narrow screens (< 600px) for better mobile display.
  */
 export function StartListResultsTable({
+  eventId,
   results,
   isUpcoming,
   isDark = false,
   showTeamOrder = false,
 }: StartListResultsTableProps) {
+  const { width } = useWindowDimensions();
+
   if (results.length === 0) {
     return null;
   }
 
-  const borderColor = isDark ? "#333333" : "#e0e0e0";
-  const headerBg = isDark ? "#1a1a1a" : "#f5f5f5";
-  const textColor = isDark ? "#ffffff" : "#000000";
-  const subTextColor = isDark ? "#cccccc" : "#666666";
+  // Calculate responsive widths
+  // Max width is 1000, but adapt to screen width
+  const containerMaxWidth = Math.min(width - 32, 1000);
+
+  // Determine if we should show category column based on screen width
+  const showCategory = containerMaxWidth > 600;
+
+  // Calculate column widths
+  const positionWidth = isUpcoming ? 0 : 80;
+  const teamOrderWidth = showTeamOrder ? 70 : 0;
+  const timeWidth = isUpcoming ? 0 : 80;
+  const categoryWidth = showCategory ? 90 : 0;
+
+  // Athlete column gets remaining space
+  const fixedWidths =
+    positionWidth + teamOrderWidth + timeWidth + categoryWidth;
+  const athleteWidth = containerMaxWidth - fixedWidths;
+
+  const colors = Colors[isDark ? "dark" : "light"];
+  const borderColor = colors.border;
+  const headerBg = colors.tableHeader;
+  const textColor = colors.text;
+  const subTextColor = colors.subText;
+  const linkColor = colors.link;
 
   return (
-    <View style={styles.container}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={true}>
+    <View style={[styles.container, { maxWidth: containerMaxWidth }]}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.table}>
           {/* Table Header */}
           <View style={[styles.headerRow, { backgroundColor: headerBg }]}>
@@ -41,8 +101,7 @@ export function StartListResultsTable({
               <Text
                 style={[
                   styles.headerCell,
-                  styles.positionCell,
-                  { color: textColor, borderColor },
+                  { color: textColor, borderColor, width: positionWidth },
                 ]}
               >
                 Position
@@ -52,8 +111,7 @@ export function StartListResultsTable({
               <Text
                 style={[
                   styles.headerCell,
-                  styles.teamOrderCell,
-                  { color: textColor, borderColor },
+                  { color: textColor, borderColor, width: teamOrderWidth },
                 ]}
               >
                 Team Order
@@ -62,30 +120,29 @@ export function StartListResultsTable({
             <Text
               style={[
                 styles.headerCell,
-                styles.nameCell,
-                { color: textColor, borderColor },
+                { color: textColor, borderColor, width: athleteWidth },
               ]}
             >
               Athlete
-            </Text>
-            <Text
-              style={[
-                styles.headerCell,
-                styles.categoryCell,
-                { color: textColor, borderColor },
-              ]}
-            >
-              Category
             </Text>
             {!isUpcoming && (
               <Text
                 style={[
                   styles.headerCell,
-                  styles.timeCell,
-                  { color: textColor, borderColor },
+                  { color: textColor, borderColor, width: timeWidth },
                 ]}
               >
                 Finish Time
+              </Text>
+            )}
+            {showCategory && (
+              <Text
+                style={[
+                  styles.headerCell,
+                  { color: textColor, borderColor, width: categoryWidth },
+                ]}
+              >
+                Category
               </Text>
             )}
           </View>
@@ -97,7 +154,7 @@ export function StartListResultsTable({
               style={[
                 styles.row,
                 index % 2 === 1 && {
-                  backgroundColor: isDark ? "#0a0a0a" : "#fafafa",
+                  backgroundColor: colors.tableRowAlt,
                 },
               ]}
             >
@@ -105,8 +162,8 @@ export function StartListResultsTable({
                 <Text
                   style={[
                     styles.cell,
-                    styles.positionCell,
-                    { color: textColor, borderColor },
+                    styles.centerText,
+                    { color: textColor, borderColor, width: positionWidth },
                   ]}
                 >
                   {result.position || "-"}
@@ -116,34 +173,39 @@ export function StartListResultsTable({
                 <Text
                   style={[
                     styles.cell,
-                    styles.teamOrderCell,
-                    { color: textColor, borderColor },
+                    styles.centerText,
+                    { color: textColor, borderColor, width: teamOrderWidth },
                   ]}
                 >
                   {getTeamOrder(result, results) || "-"}
                 </Text>
               )}
-              <View style={[styles.cell, styles.nameCell, { borderColor }]}>
-                <Text style={[styles.nameText, { color: textColor }]}>
-                  {getNameWithRaceNumber(
-                    result.first_name,
-                    result.last_name,
-                    result.race_number
-                  ) || "Unknown"}
-                </Text>
+              <View style={[styles.cell, { borderColor, width: athleteWidth }]}>
+                <Link
+                  href={`/events/${eventId}/individuals/${result.id}`}
+                  asChild
+                >
+                  <Pressable>
+                    <Text
+                      style={[
+                        styles.nameText,
+                        {
+                          color: linkColor,
+                          textDecorationLine: "underline",
+                        },
+                      ]}
+                    >
+                      {getNameWithRaceNumber(
+                        result.first_name,
+                        result.last_name,
+                        result.race_number
+                      ) || "Unknown"}
+                    </Text>
+                  </Pressable>
+                </Link>
                 {result.team?.name && (
                   <Text style={[styles.teamText, { color: subTextColor }]}>
                     {result.team.name}
-                  </Text>
-                )}
-              </View>
-              <View style={[styles.cell, styles.categoryCell, { borderColor }]}>
-                <Text style={[styles.categoryText, { color: subTextColor }]}>
-                  {capitalizeFirst(result.sex_category?.name || "") || "-"}
-                </Text>
-                {result.age_category?.name && (
-                  <Text style={[styles.categoryText, { color: subTextColor }]}>
-                    {result.age_category.name}
                   </Text>
                 )}
               </View>
@@ -151,14 +213,30 @@ export function StartListResultsTable({
                 <Text
                   style={[
                     styles.cell,
-                    styles.timeCell,
-                    { color: textColor, borderColor },
+                    styles.centerText,
+                    { color: textColor, borderColor, width: timeWidth },
                   ]}
                 >
                   {result.finish_time100
                     ? formatTime(result.finish_time100)
                     : "-"}
                 </Text>
+              )}
+              {showCategory && (
+                <View
+                  style={[styles.cell, { borderColor, width: categoryWidth }]}
+                >
+                  <Text style={[styles.categoryText, { color: subTextColor }]}>
+                    {capitalizeFirst(result.sex_category?.name || "") || "-"}
+                  </Text>
+                  {result.age_category?.name && (
+                    <Text
+                      style={[styles.categoryText, { color: subTextColor }]}
+                    >
+                      {result.age_category.name}
+                    </Text>
+                  )}
+                </View>
               )}
             </View>
           ))}
@@ -171,11 +249,13 @@ export function StartListResultsTable({
 const styles = StyleSheet.create({
   container: {
     marginVertical: 16,
+    width: "100%",
+    alignSelf: "center",
   },
   table: {
     borderRadius: 8,
     overflow: "hidden",
-    width: "100%",
+    minWidth: "100%",
   },
   headerRow: {
     flexDirection: "row",
@@ -196,23 +276,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderRightWidth: 1,
   },
-  positionCell: {
-    width: 80,
-    textAlign: "center",
-  },
-  teamOrderCell: {
-    width: 100,
-    textAlign: "center",
-  },
-  nameCell: {
-    width: 250,
-    minWidth: 250,
-  },
-  categoryCell: {
-    width: 120,
-  },
-  timeCell: {
-    width: 120,
+  centerText: {
     textAlign: "center",
   },
   nameText: {

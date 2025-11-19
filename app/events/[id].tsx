@@ -10,6 +10,7 @@ import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import NoResultsFound from "@/components/ui/NoResultsFound";
 import RaceStatusBadge from "@/components/ui/RaceStatusBadge";
 import { StartListResultsTable } from "@/components/ui/StartListResultsTable";
+import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatEventDate } from "@/utils/dateUtils";
 import { isUpcoming } from "@/utils/eventFilters";
@@ -35,6 +36,7 @@ export default function EventDetailsPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const colors = Colors[isDark ? "dark" : "light"];
   const [searchQuery, setSearchQuery] = useState("");
   const [event, setEvent] = useState<RaceEventWithOrganiser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -119,22 +121,11 @@ export default function EventDetailsPage() {
           }}
         />
         <View
-          style={[
-            styles.container,
-            { backgroundColor: isDark ? "#000000" : "#ffffff" },
-          ]}
+          style={[styles.container, { backgroundColor: colors.background }]}
         >
           <View style={styles.loadingContainer}>
-            <ActivityIndicator
-              size="large"
-              color={isDark ? "#ffffff" : "#000000"}
-            />
-            <Text
-              style={[
-                styles.loadingText,
-                { color: isDark ? "#cccccc" : "#666666" },
-              ]}
-            >
+            <ActivityIndicator size="large" color={colors.text} />
+            <Text style={[styles.loadingText, { color: colors.subText }]}>
               Loading event...
             </Text>
           </View>
@@ -154,18 +145,10 @@ export default function EventDetailsPage() {
           }}
         />
         <View
-          style={[
-            styles.container,
-            { backgroundColor: isDark ? "#000000" : "#ffffff" },
-          ]}
+          style={[styles.container, { backgroundColor: colors.background }]}
         >
           <View style={styles.errorContainer}>
-            <Text
-              style={[
-                styles.errorText,
-                { color: isDark ? "#ff6b6b" : "#d32f2f" },
-              ]}
-            >
+            <Text style={[styles.errorText, { color: colors.error }]}>
               {error || "Event not found"}
             </Text>
           </View>
@@ -185,12 +168,7 @@ export default function EventDetailsPage() {
         }}
       />
 
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: isDark ? "#000000" : "#ffffff" },
-        ]}
-      >
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <EventTopNav
           eventName={event.title || "Event"}
           eventStartDate={event.race_start_date || ""}
@@ -198,21 +176,13 @@ export default function EventDetailsPage() {
 
         <ScrollView style={styles.content}>
           <MaxWidthContainer style={styles.contentContainer}>
-            <Text
-              style={[
-                styles.heading,
-                { color: isDark ? "#ffffff" : "#000000" },
-              ]}
-            >
+            <Text style={[styles.heading, { color: colors.text }]}>
               {event.title}
             </Text>
 
             <View style={styles.dateLocationRow}>
               <Text
-                style={[
-                  styles.dateLocationText,
-                  { color: isDark ? "#cccccc" : "#666666" },
-                ]}
+                style={[styles.dateLocationText, { color: colors.subText }]}
               >
                 {formatEventDate(event.race_start_date)}
               </Text>
@@ -232,10 +202,7 @@ export default function EventDetailsPage() {
 
             {event.description && (
               <Text
-                style={[
-                  styles.description,
-                  { color: isDark ? "#e0e0e0" : "#333333" },
-                ]}
+                style={[styles.description, { color: colors.secondaryText }]}
               >
                 {event.description}
               </Text>
@@ -259,41 +226,26 @@ export default function EventDetailsPage() {
               placeholder="Race number or athlete name"
             />
 
-            <Text
-              style={[
-                styles.sectionHeading,
-                { color: isDark ? "#ffffff" : "#000000" },
-              ]}
-            >
+            <Text style={[styles.sectionHeading, { color: colors.text }]}>
               {eventIsUpcoming ? "Start List" : "Results"}
             </Text>
 
             {resultsLoading ? (
               <View style={styles.resultsLoadingContainer}>
-                <ActivityIndicator
-                  size="small"
-                  color={isDark ? "#ffffff" : "#000000"}
-                />
+                <ActivityIndicator size="small" color={colors.text} />
                 <Text
-                  style={[
-                    styles.resultsLoadingText,
-                    { color: isDark ? "#cccccc" : "#666666" },
-                  ]}
+                  style={[styles.resultsLoadingText, { color: colors.subText }]}
                 >
                   Loading {eventIsUpcoming ? "start list" : "results"}...
                 </Text>
               </View>
             ) : resultsCount > 0 ? (
               <>
-                <Text
-                  style={[
-                    styles.resultsCount,
-                    { color: isDark ? "#cccccc" : "#666666" },
-                  ]}
-                >
+                <Text style={[styles.resultsCount, { color: colors.subText }]}>
                   {resultsCount} {resultsCount === 1 ? "entry" : "entries"}
                 </Text>
                 <StartListResultsTable
+                  eventId={id}
                   results={results}
                   isUpcoming={eventIsUpcoming}
                   isDark={isDark}
@@ -369,7 +321,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   registrationButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: Colors.light.success,
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -401,7 +353,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   loadMoreButton: {
-    backgroundColor: "#2196F3",
+    backgroundColor: Colors.light.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,

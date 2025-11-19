@@ -22,6 +22,19 @@ export const Colors = {
     toggleSelected: "#6A1B9A",
     toggleSelectedText: "#ffffff",
     toggleUnselectedText: "#333333",
+    link: "#2563eb",
+    // Table colors
+    border: "#e0e0e0",
+    tableHeader: "#f5f5f5",
+    tableRowAlt: "#fafafa",
+    subText: "#666666",
+    // Button colors
+    success: "#4CAF50",
+    primary: "#2196F3",
+    // Status colors
+    error: "#d32f2f",
+    muted: "#e0e0e0",
+    secondaryText: "#333333",
   },
   dark: {
     text: "#ECEDEE",
@@ -36,6 +49,19 @@ export const Colors = {
     toggleSelected: "#6a1b9a",
     toggleSelectedText: "#ffffff",
     toggleUnselectedText: "#e0e0e0",
+    link: "#60a5fa",
+    // Table colors
+    border: "#333333",
+    tableHeader: "#1a1a1a",
+    tableRowAlt: "#0a0a0a",
+    subText: "#cccccc",
+    // Button colors
+    success: "#4CAF50",
+    primary: "#2196F3",
+    // Status colors
+    error: "#ff6b6b",
+    muted: "#e0e0e0",
+    secondaryText: "#e0e0e0",
   },
 };
 
