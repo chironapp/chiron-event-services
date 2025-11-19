@@ -6,8 +6,10 @@
 
 import type { RaceTeamWithMemberCount } from "@/api/results";
 import { Colors } from "@/constants/theme";
+import { Link } from "expo-router";
 import React from "react";
 import {
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -36,6 +38,7 @@ function formatTime(centiseconds: number | null): string {
 }
 
 interface RelayTeamResultsTableProps {
+  eventId: string;
   teams: RaceTeamWithMemberCount[];
   isDark?: boolean;
 }
@@ -45,6 +48,7 @@ interface RelayTeamResultsTableProps {
  * Uses responsive width calculations to adapt from desktop (~1000px) to mobile widths.
  */
 export function RelayTeamResultsTable({
+  eventId,
   teams,
   isDark = false,
 }: RelayTeamResultsTableProps) {
@@ -71,6 +75,7 @@ export function RelayTeamResultsTable({
   const headerBg = colors.tableHeader;
   const textColor = colors.text;
   const subTextColor = colors.subText;
+  const linkColor = colors.link;
 
   return (
     <View style={[styles.container, { maxWidth: containerMaxWidth }]}>
@@ -124,10 +129,24 @@ export function RelayTeamResultsTable({
               >
                 {team.position || "-"}
               </Text>
-              <View style={[styles.cell, { borderColor, width: teamNameWidth }]}>
-                <Text style={[styles.nameText, { color: textColor }]}>
-                  {team.name || "Unknown Team"}
-                </Text>
+              <View
+                style={[styles.cell, { borderColor, width: teamNameWidth }]}
+              >
+                <Link href={`/events/${eventId}/teams/${team.id}`} asChild>
+                  <Pressable>
+                    <Text
+                      style={[
+                        styles.nameText,
+                        {
+                          color: linkColor,
+                          textDecorationLine: "underline",
+                        },
+                      ]}
+                    >
+                      {team.name || "Unknown Team"}
+                    </Text>
+                  </Pressable>
+                </Link>
                 <Text style={[styles.teamText, { color: subTextColor }]}>
                   {team.member_count}{" "}
                   {team.member_count === 1 ? "team member" : "team members"}

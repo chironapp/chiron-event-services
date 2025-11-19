@@ -6,6 +6,7 @@ import { EventHeader, ResultsToggle, SearchBar } from "@/components/events";
 import { RelayTeamResultsTable } from "@/components/results/RelayTeamResultsTable";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import NoResultsFound from "@/components/ui/NoResultsFound";
+import SectionHeading from "@/components/ui/SectionHeading";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { isUpcoming } from "@/utils/eventFilters";
@@ -183,9 +184,9 @@ export default function EventDetailsPage() {
               onSelectionChange={handleResultsViewChange}
             />
 
-            <Text style={[styles.sectionHeading, { color: colors.text }]}>
+            <SectionHeading>
               {eventIsUpcoming ? "Teams" : "Team Results"}
-            </Text>
+            </SectionHeading>
 
             <SearchBar
               value={searchQuery}
@@ -207,7 +208,11 @@ export default function EventDetailsPage() {
                 <Text style={[styles.resultsCount, { color: colors.subText }]}>
                   {teamsCount} {teamsCount === 1 ? "team" : "teams"}
                 </Text>
-                <RelayTeamResultsTable teams={teams} isDark={isDark} />
+                <RelayTeamResultsTable
+                  eventId={id}
+                  teams={teams}
+                  isDark={isDark}
+                />
               </>
             ) : (
               <NoResultsFound
@@ -248,12 +253,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
 
-  sectionHeading: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginTop: 24,
-    marginBottom: 16,
-  },
   resultsLoadingContainer: {
     padding: 20,
     alignItems: "center",
