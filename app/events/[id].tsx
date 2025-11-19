@@ -6,10 +6,10 @@ import {
 import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
 import { SearchBar } from "@/components/events";
+import { StartListResultsTable } from "@/components/results/StartListResultsTable";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import NoResultsFound from "@/components/ui/NoResultsFound";
 import RaceStatusBadge from "@/components/ui/RaceStatusBadge";
-import { StartListResultsTable } from "@/components/ui/StartListResultsTable";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatEventDate } from "@/utils/dateUtils";

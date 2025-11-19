@@ -88,17 +88,17 @@ If you need a new color that doesn't exist:
 
 ### Table Components
 
-#### StartListResultsTable vs StartListResultsTable2
+#### StartListResultsTable vs StartListResultsTable
 
-- Use `StartListResultsTable2` for new implementations (improved responsive design)
-- Located at `/components/ui/StartListResultsTable2.tsx`
+- Use `StartListResultsTable` for new implementations (improved responsive design)
+- Located at `/components/ui/StartListResultsTable.tsx`
 - Automatically handles responsive layout and column visibility
 - Supports team order column for relay events
 
 #### Table Features
 
 ```typescript
-<StartListResultsTable2
+<StartListResultsTable
   results={results}
   isUpcoming={eventIsUpcoming} // Changes columns/layout
   isDark={isDark} // Theme support

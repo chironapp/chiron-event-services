@@ -1,5 +1,5 @@
 /**
- * StartListResultsTable2 - Responsive table component for race results
+ * StartListResultsTable - Responsive table component for race results
  *
  * This is an improved version of StartListResultsTable with responsive design.
  * Test this component at app/events/[id]/test1.tsx
