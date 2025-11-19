@@ -130,6 +130,11 @@ export const RACE_STATUSES = {
 } as const;
 
 /**
+ * Type for race status values
+ */
+export type RaceStatus = (typeof RACE_STATUSES)[keyof typeof RACE_STATUSES];
+
+/**
  * Human-readable labels for race statuses
  * Used for UI display and user-facing text
  */
@@ -476,3 +481,160 @@ export const AGE_CATEGORY_MAP = ALL_AGE_CATEGORIES.reduce((map, category) => {
   map[category.id] = category;
   return map;
 }, {} as Record<number, AgeCategory>);
+
+/**
+ * Extended race position constants
+ * Covers both regular finishing positions (positive integers) and special statuses (negative integers)
+ * Maps to the race_start_list_results.position field in the database
+ */
+export const RACE_POSITION_SPECIAL = {
+  DNS: -1, // Did Not Start
+  DNF: -2, // Did Not Finish
+  DQ: -3, // Disqualified
+  OTHER_NO_RESULT: -4, // Other no result
+} as const;
+
+/**
+ * Type for race position values
+ * Positive integers for finishing positions, negative integers for special statuses
+ */
+export type RacePosition = number;
+
+/**
+ * Type guard to check if a position is a special status
+ * @param position - The race position to check
+ * @returns True if position is a special status (negative), false if regular finish position
+ */
+export function isSpecialPosition(
+  position: number | null | undefined
+): boolean {
+  return position !== null && position !== undefined && position < 0;
+}
+
+/**
+ * Type guard to check if a position is a regular finishing position
+ * @param position - The race position to check
+ * @returns True if position is a regular finish (positive), false if special status
+ */
+export function isFinishPosition(position: number | null | undefined): boolean {
+  return position !== null && position !== undefined && position > 0;
+}
+
+/**
+ * Human-readable labels for special race positions
+ * Used for UI display and user-facing text
+ */
+export const RACE_POSITION_SPECIAL_LABELS = {
+  [RACE_POSITION_SPECIAL.DNS]: "DNS",
+  [RACE_POSITION_SPECIAL.DNF]: "DNF",
+  [RACE_POSITION_SPECIAL.DQ]: "DQ",
+  [RACE_POSITION_SPECIAL.OTHER_NO_RESULT]: "No Result",
+} as const;
+
+/**
+ * Full descriptions for special race positions
+ * Used for tooltips, help text, and detailed explanations
+ */
+export const RACE_POSITION_SPECIAL_DESCRIPTIONS = {
+  [RACE_POSITION_SPECIAL.DNS]: "Did Not Start",
+  [RACE_POSITION_SPECIAL.DNF]: "Did Not Finish",
+  [RACE_POSITION_SPECIAL.DQ]: "Disqualified",
+  [RACE_POSITION_SPECIAL.OTHER_NO_RESULT]: "Other No Result",
+} as const;
+
+/**
+ * Array of special position options for dropdowns/selectors
+ * @example
+ * ```typescript
+ * RACE_POSITION_SPECIAL_OPTIONS.map(option => (
+ *   <Picker.Item key={option.value} label={option.label} value={option.value} />
+ * ))
+ * ```
+ */
+export const RACE_POSITION_SPECIAL_OPTIONS = [
+  {
+    value: RACE_POSITION_SPECIAL.DNS,
+    label: RACE_POSITION_SPECIAL_LABELS[RACE_POSITION_SPECIAL.DNS],
+    description: RACE_POSITION_SPECIAL_DESCRIPTIONS[RACE_POSITION_SPECIAL.DNS],
+  },
+  {
+    value: RACE_POSITION_SPECIAL.DNF,
+    label: RACE_POSITION_SPECIAL_LABELS[RACE_POSITION_SPECIAL.DNF],
+    description: RACE_POSITION_SPECIAL_DESCRIPTIONS[RACE_POSITION_SPECIAL.DNF],
+  },
+  {
+    value: RACE_POSITION_SPECIAL.DQ,
+    label: RACE_POSITION_SPECIAL_LABELS[RACE_POSITION_SPECIAL.DQ],
+    description: RACE_POSITION_SPECIAL_DESCRIPTIONS[RACE_POSITION_SPECIAL.DQ],
+  },
+  {
+    value: RACE_POSITION_SPECIAL.OTHER_NO_RESULT,
+    label: RACE_POSITION_SPECIAL_LABELS[RACE_POSITION_SPECIAL.OTHER_NO_RESULT],
+    description:
+      RACE_POSITION_SPECIAL_DESCRIPTIONS[RACE_POSITION_SPECIAL.OTHER_NO_RESULT],
+  },
+] as const;
+
+/**
+ * Format race position for display
+ * Converts numeric position to appropriate display string
+ *
+ * @param position - The race position (positive for finish, negative for special status, null/undefined for no position)
+ * @returns Formatted string for display
+ *
+ * @example
+ * ```typescript
+ * formatRacePosition(1) // "1st"
+ * formatRacePosition(2) // "2nd"
+ * formatRacePosition(-1) // "DNS"
+ * formatRacePosition(null) // "-"
+ * ```
+ */
+export function formatRacePosition(
+  position: number | null | undefined
+): string {
+  if (position === null || position === undefined) {
+    return "-";
+  }
+
+  if (isSpecialPosition(position)) {
+    return (
+      RACE_POSITION_SPECIAL_LABELS[
+        position as keyof typeof RACE_POSITION_SPECIAL_LABELS
+      ] || "Unknown"
+    );
+  }
+
+  if (isFinishPosition(position)) {
+    // Add ordinal suffix for regular positions
+    const suffix = getOrdinalSuffix(position);
+    return `${position}${suffix}`;
+  }
+
+  return "-";
+}
+
+/**
+ * Get ordinal suffix for a number (1st, 2nd, 3rd, etc.)
+ * @param num - The number to get suffix for
+ * @returns Ordinal suffix string
+ */
+function getOrdinalSuffix(num: number): string {
+  const lastDigit = num % 10;
+  const lastTwoDigits = num % 100;
+
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+    return "th";
+  }
+
+  switch (lastDigit) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}

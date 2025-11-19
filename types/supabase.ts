@@ -175,6 +175,7 @@ export type Database = {
           age_category_position: number | null
           created_at: string
           finish_time100: number | null
+          finished_at_local: string | null
           first_name: string
           id: string
           last_name: string
@@ -193,6 +194,7 @@ export type Database = {
           age_category_position?: number | null
           created_at?: string
           finish_time100?: number | null
+          finished_at_local?: string | null
           first_name: string
           id?: string
           last_name: string
@@ -211,6 +213,7 @@ export type Database = {
           age_category_position?: number | null
           created_at?: string
           finish_time100?: number | null
+          finished_at_local?: string | null
           first_name?: string
           id?: string
           last_name?: string
@@ -258,22 +261,28 @@ export type Database = {
             race_teams: {
         Row: {
           created_at: string
+          finish_time100: number | null
           id: string
           name: string
+          position: number | null
           public_race_event_id: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          finish_time100?: number | null
           id?: string
           name: string
+          position?: number | null
           public_race_event_id: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          finish_time100?: number | null
           id?: string
           name?: string
+          position?: number | null
           public_race_event_id?: string
           updated_at?: string
         }

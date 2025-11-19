@@ -1,4 +1,10 @@
-import { RACE_STATUSES, RACE_TYPES, SPORT_TYPES } from "../constants/raceTypes";
+import {
+  RACE_STATUSES,
+  RACE_TYPES,
+  SPORT_TYPES,
+  type RacePosition,
+} from "@/constants/raceTypes";
+import { SEX_CATEGORY_IDS, type SexCategoryId } from "@/constants/sex";
 import type { Database } from "./supabase";
 
 /**
@@ -19,22 +25,13 @@ export type RaceStatus = (typeof RACE_STATUSES)[keyof typeof RACE_STATUSES];
 /**
  * Sex type for athlete categorization
  */
-export type Sex = "male" | "female" | "other";
+export type Sex = "female" | "male" | "other";
 
 /**
- * Sex category ID constants used by SexPicker and other components
+ * Sex category ID constants - re-exported from centralized location
+ * @see {@link @/constants/sex}
  */
-export const SEX_CATEGORY_IDS = {
-  MALE: 1,
-  FEMALE: 2,
-  OTHER: 3,
-} as const;
-
-/**
- * Type for sex category ID values
- */
-export type SexCategoryId =
-  (typeof SEX_CATEGORY_IDS)[keyof typeof SEX_CATEGORY_IDS];
+export { SEX_CATEGORY_IDS, type SexCategoryId };
 
 /**
  * Age category interface for race athlete categorization
@@ -47,6 +44,15 @@ export interface AgeCategory {
   sex: Sex;
   minAge: number;
   maxAge: number | null; // null means no upper limit (e.g., 70+)
+}
+
+/**
+ * Race team row from database with enhanced typing
+ * Maps to race_teams database table
+ */
+type DatabaseRaceTeamRow = Database["public"]["Tables"]["race_teams"]["Row"];
+export interface RaceTeam extends DatabaseRaceTeamRow {
+  position: RacePosition | null; // Enhanced position type supporting special statuses
 }
 
 /**
@@ -163,6 +169,11 @@ export interface PublicRaceEventDatabase {
         Insert: PublicRaceEventInsert;
         Update: PublicRaceEventUpdate;
       };
+      race_start_list_results: {
+        Row: RaceStartListResult;
+        Insert: RaceStartListResultInsert;
+        Update: RaceStartListResultUpdate;
+      };
     };
   };
 }
@@ -246,4 +257,93 @@ export interface StartListEntryInsert {
   month_of_birth?: number | null;
   year_of_birth?: number | null;
   email?: string | null;
+}
+
+/**
+ * Race start list result row from database with enhanced typing
+ * Extends the auto-generated Supabase type with our custom position type
+ */
+type DatabaseRaceStartListResultRow =
+  Database["public"]["Tables"]["race_start_list_results"]["Row"];
+export interface RaceStartListResult
+  extends Omit<
+    DatabaseRaceStartListResultRow,
+    "position" | "age_category_position" | "sex_category_position"
+  > {
+  position: RacePosition | null; // Enhanced position type supporting special statuses
+  age_category_position: RacePosition | null; // Position within age category
+  sex_category_position: RacePosition | null; // Position within sex category
+  finished_at_local: string | null; // ISO timestamp when participant finished
+}
+
+/**
+ * Race start list result insert type with enhanced typing
+ * Used for creating new race start list entries with type-safe position values
+ */
+type DatabaseRaceStartListResultInsert =
+  Database["public"]["Tables"]["race_start_list_results"]["Insert"];
+export interface RaceStartListResultInsert
+  extends Omit<
+    DatabaseRaceStartListResultInsert,
+    "position" | "age_category_position" | "sex_category_position"
+  > {
+  position?: RacePosition | null;
+  age_category_position?: RacePosition | null;
+  sex_category_position?: RacePosition | null;
+  finished_at_local?: string | null;
+}
+
+/**
+ * Race start list result update type with enhanced typing
+ * Used for updating existing race start list entries with type-safe position values
+ */
+type DatabaseRaceStartListResultUpdate =
+  Database["public"]["Tables"]["race_start_list_results"]["Update"];
+export interface RaceStartListResultUpdate
+  extends Omit<
+    DatabaseRaceStartListResultUpdate,
+    "position" | "age_category_position" | "sex_category_position"
+  > {
+  position?: RacePosition | null;
+  age_category_position?: RacePosition | null;
+  sex_category_position?: RacePosition | null;
+  finished_at_local?: string | null;
+}
+
+/**
+ * Enhanced race start list result with populated category information
+ * Used when joining with race_athlete_categories table
+ */
+export interface RaceStartListResultWithCategories extends RaceStartListResult {
+  sex_category: {
+    id: number;
+    name: string;
+    description: string;
+  } | null;
+  age_category: {
+    id: number;
+    name: string;
+    description: string;
+    sex: Sex;
+    minAge: number;
+    maxAge: number | null;
+  } | null;
+  team: {
+    id: string;
+    name: string;
+  } | null;
+}
+
+/**
+ * Race participant with timing data
+ * Combines start list result with calculated timing information
+ */
+export interface RaceParticipantWithTiming extends RaceStartListResult {
+  // Calculated fields
+  finish_time_formatted?: string; // "1:23:45" format
+  net_finish_time_formatted?: string; // "1:23:45" format
+  pace_per_km?: string; // "5:30" format for pace per kilometer
+  pace_per_mile?: string; // "8:52" format for pace per mile
+  has_finished: boolean; // True if participant has a finish time
+  is_special_status: boolean; // True if position is DNS, DNF, DQ, etc.
 }
