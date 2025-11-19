@@ -8,6 +8,16 @@ export type RaceStartListResultWithCategories = RaceStartListResult & {
   team: { name: string } | null;
 };
 
+// Extended type to include event data for individual participant view
+export type RaceStartListResultWithEvent = RaceStartListResultWithCategories & {
+  public_race_event: {
+    title: string | null;
+    race_start_date: string | null;
+    race_started_at_local: string | null;
+    race_status: string | null;
+  } | null;
+};
+
 /**
  * API functions for fetching race start list and results data from Supabase
  * Provides paginated results and error handling
@@ -145,6 +155,55 @@ export async function getResultsCount(eventId: string): Promise<number> {
     return count || 0;
   } catch (error) {
     console.error("Error getting results count:", error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch a single participant result by participant ID
+ * Includes joined data for categories, team, and event information
+ *
+ * @param participantId - The participant ID (race_start_list_results.id)
+ * @returns Promise<RaceStartListResultWithEvent | null> - Participant result with event data
+ *
+ * @example
+ * ```typescript
+ * const participant = await fetchParticipantById('participant-123');
+ * if (participant) {
+ *   console.log(participant.first_name, participant.last_name);
+ *   console.log(participant.public_race_event?.title);
+ * }
+ * ```
+ */
+export async function fetchParticipantById(
+  participantId: string
+): Promise<RaceStartListResultWithEvent | null> {
+  try {
+    const { data, error } = await supabase
+      .from("race_start_list_results")
+      .select(
+        `
+        *,
+        age_category:race_athlete_categories!race_start_list_results_age_category_id_fkey(name),
+        sex_category:race_athlete_categories!race_start_list_results_sex_category_id_fkey(name),
+        team:race_teams(name),
+        public_race_event:public_race_events(title, race_start_date, race_started_at_local, race_status)
+      `
+      )
+      .eq("id", participantId)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") {
+        // Not found
+        return null;
+      }
+      throw new Error(`Failed to fetch participant: ${error.message}`);
+    }
+
+    return data as RaceStartListResultWithEvent;
+  } catch (error) {
+    console.error("Error fetching participant:", error);
     throw error;
   }
 }
