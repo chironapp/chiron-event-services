@@ -346,3 +346,84 @@ export async function getTeamsCount(eventId: string): Promise<number> {
     throw error;
   }
 }
+
+// Extended type for race teams with member count
+export type RaceTeamWithMemberCount = {
+  id: string;
+  name: string;
+  position: number | null;
+  finish_time100: number | null;
+  created_at: string;
+  updated_at: string;
+  public_race_event_id: string;
+  member_count: number;
+};
+
+/**
+ * Fetch race teams for a specific event with member count
+ * Returns all teams sorted by position
+ *
+ * @param eventId - The event ID
+ * @returns Promise<RaceTeamWithMemberCount[]> - Array of teams with member count
+ *
+ * @example
+ * ```typescript
+ * const teams = await fetchRaceTeams('event-123');
+ * console.log(`Event has ${teams.length} teams`);
+ * ```
+ */
+export async function fetchRaceTeams(
+  eventId: string
+): Promise<RaceTeamWithMemberCount[]> {
+  try {
+    // First, fetch all teams for the event
+    const { data: teams, error: teamsError } = await supabase
+      .from("race_teams")
+      .select("*")
+      .eq("public_race_event_id", eventId)
+      .order("position", { ascending: true, nullsFirst: false });
+
+    if (teamsError) {
+      throw new Error(`Failed to fetch teams: ${teamsError.message}`);
+    }
+
+    if (!teams || teams.length === 0) {
+      return [];
+    }
+
+    // Fetch member counts for all teams in a single query
+    const teamIds = teams.map((team) => team.id);
+    const { data: memberCounts, error: countsError } = await supabase
+      .from("race_start_list_results")
+      .select("team_id")
+      .in("team_id", teamIds);
+
+    if (countsError) {
+      throw new Error(`Failed to fetch member counts: ${countsError.message}`);
+    }
+
+    // Count members per team
+    const memberCountMap = new Map<string, number>();
+    (memberCounts || []).forEach((result) => {
+      if (result.team_id) {
+        memberCountMap.set(
+          result.team_id,
+          (memberCountMap.get(result.team_id) || 0) + 1
+        );
+      }
+    });
+
+    // Combine teams with member counts
+    const teamsWithMemberCount: RaceTeamWithMemberCount[] = teams.map(
+      (team) => ({
+        ...team,
+        member_count: memberCountMap.get(team.id) || 0,
+      })
+    );
+
+    return teamsWithMemberCount;
+  } catch (error) {
+    console.error("Error fetching race teams:", error);
+    throw error;
+  }
+}
