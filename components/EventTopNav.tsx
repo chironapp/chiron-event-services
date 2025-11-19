@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    maxWidth: 1200,
+    maxWidth: 1020,
     width: "100%",
     alignSelf: "center",
   },

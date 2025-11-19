@@ -115,7 +115,7 @@ export async function fetchRaceResults(
     if (search.trim()) {
       const searchTerm = search.trim();
       const isNumeric = /^\d+$/.test(searchTerm);
-      
+
       if (isNumeric) {
         // If search is numeric, search race_number and names
         query = query.or(
