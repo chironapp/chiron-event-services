@@ -173,3 +173,47 @@ function getOrdinalSuffix(num: number): string {
       return "th";
   }
 }
+
+/**
+ * Get team status based on race status and team data
+ * @param team - The team object with finish_time100
+ * @param teamMembers - Array of team members to check if any have started
+ * @param raceStatus - The race status
+ * @returns Status string for display
+ *
+ * @example
+ * ```typescript
+ * getTeamStatus(team, members, "completed") // Returns "Finished"
+ * getTeamStatus(team, members, "started") // Returns "Started"
+ * ```
+ */
+export function getTeamStatus(
+  team: {
+    finish_time100?: number | null;
+  },
+  teamMembers: Array<{
+    finished_at_local?: string | null;
+  }>,
+  raceStatus: string | null
+): string {
+  // Check if race hasn't started
+  if (isRaceNotStarted(raceStatus)) {
+    return "Not Started";
+  }
+
+  // Check if team has finished (has a finish time)
+  if (team.finish_time100 && team.finish_time100 > 0) {
+    return "Finished";
+  }
+
+  // Check if any team member has started (has a finished_at_local timestamp)
+  const anyMemberStarted = teamMembers.some(
+    (member) => member.finished_at_local
+  );
+
+  if (anyMemberStarted) {
+    return "Started";
+  }
+
+  return "Not Started";
+}
