@@ -81,3 +81,38 @@ export const capitalizeFirst = (text?: string): string => {
 
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
 };
+
+/**
+ * Generates a full name with race number from first name, last name, and race number
+ *
+ * @param firstName - The person's first name
+ * @param lastName - The person's last name
+ * @param raceNumber - The person's race number
+ * @returns The full name with race number as "firstName lastName (#raceNumber)", or just the name if no race number
+ *
+ * @example
+ * ```typescript
+ * getNameWithRaceNumber("John", "Doe", "123") // returns "John Doe (#123)"
+ * getNameWithRaceNumber("John", "Doe", 123) // returns "John Doe (#123)"
+ * getNameWithRaceNumber("John", "Doe", null) // returns "John Doe"
+ * getNameWithRaceNumber("John", "", "123") // returns "John (#123)"
+ * ```
+ */
+export const getNameWithRaceNumber = (
+  firstName?: string,
+  lastName?: string,
+  raceNumber?: string | number | null
+): string => {
+  const fullName = getFullName(firstName, lastName);
+
+  if (!raceNumber) {
+    return fullName;
+  }
+
+  const raceNumberStr = String(raceNumber).trim();
+  if (!raceNumberStr) {
+    return fullName;
+  }
+
+  return fullName ? `${fullName} (#${raceNumberStr})` : `(#${raceNumberStr})`;
+};

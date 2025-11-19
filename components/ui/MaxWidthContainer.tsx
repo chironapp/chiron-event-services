@@ -58,3 +58,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
 });
+
+// Add CSS for web responsiveness
+const webStyles = `
+  @media (max-width: 768px) {
+    .max-width-container {
+      padding-left: 8px !important;
+      padding-right: 8px !important;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .max-width-container {
+      padding-left: 4px !important;
+      padding-right: 4px !important;
+    }
+  }
+`;
+
+// Inject CSS for web
+if (typeof document !== "undefined") {
+  const style = document.createElement("style");
+  style.textContent = webStyles;
+  document.head.appendChild(style);
+}

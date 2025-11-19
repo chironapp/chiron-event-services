@@ -12,8 +12,8 @@ import RaceStatusBadge from "@/components/ui/RaceStatusBadge";
 import { StartListResultsTable } from "@/components/ui/StartListResultsTable";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatEventDate } from "@/utils/dateUtils";
-
 import { isUpcoming } from "@/utils/eventFilters";
+import { isRelay } from "@/utils/relayRaceUtils";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -297,6 +297,7 @@ export default function EventDetailsPage() {
                   results={results}
                   isUpcoming={eventIsUpcoming}
                   isDark={isDark}
+                  showTeamOrder={isRelay(event)}
                 />
                 {hasMoreResults && (
                   <TouchableOpacity

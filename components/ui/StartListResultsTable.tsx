@@ -1,5 +1,6 @@
 import type { RaceStartListResultWithCategories } from "@/api/results";
-import { capitalizeFirst, getFullName } from "@/utils/nameUtils";
+import { capitalizeFirst, getNameWithRaceNumber } from "@/utils/nameUtils";
+import { getTeamOrder } from "@/utils/relayRaceUtils";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -27,6 +28,7 @@ interface StartListResultsTableProps {
   results: RaceStartListResultWithCategories[];
   isUpcoming: boolean;
   isDark?: boolean;
+  showTeamOrder?: boolean;
 }
 
 /**
@@ -36,6 +38,7 @@ export function StartListResultsTable({
   results,
   isUpcoming,
   isDark = false,
+  showTeamOrder = false,
 }: StartListResultsTableProps) {
   if (results.length === 0) {
     return null;
@@ -63,15 +66,17 @@ export function StartListResultsTable({
                 Position
               </Text>
             )}
-            <Text
-              style={[
-                styles.headerCell,
-                styles.bibCell,
-                { color: textColor, borderColor },
-              ]}
-            >
-              Race #
-            </Text>
+            {showTeamOrder && (
+              <Text
+                style={[
+                  styles.headerCell,
+                  styles.teamOrderCell,
+                  { color: textColor, borderColor },
+                ]}
+              >
+                Team Order
+              </Text>
+            )}
             <Text
               style={[
                 styles.headerCell,
@@ -125,19 +130,24 @@ export function StartListResultsTable({
                   {result.position || "-"}
                 </Text>
               )}
-              <Text
-                style={[
-                  styles.cell,
-                  styles.bibCell,
-                  { color: textColor, borderColor },
-                ]}
-              >
-                {result.race_number || "-"}
-              </Text>
+              {showTeamOrder && (
+                <Text
+                  style={[
+                    styles.cell,
+                    styles.teamOrderCell,
+                    { color: textColor, borderColor },
+                  ]}
+                >
+                  {getTeamOrder(result, results) || "-"}
+                </Text>
+              )}
               <View style={[styles.cell, styles.nameCell, { borderColor }]}>
                 <Text style={[styles.nameText, { color: textColor }]}>
-                  {getFullName(result.first_name, result.last_name) ||
-                    "Unknown"}
+                  {getNameWithRaceNumber(
+                    result.first_name,
+                    result.last_name,
+                    result.race_number
+                  ) || "Unknown"}
                 </Text>
                 {result.team?.name && (
                   <Text style={[styles.teamText, { color: subTextColor }]}>
@@ -183,7 +193,7 @@ const styles = StyleSheet.create({
   table: {
     borderRadius: 8,
     overflow: "hidden",
-    minWidth: "100%",
+    width: "100%",
   },
   headerRow: {
     flexDirection: "row",
@@ -208,13 +218,13 @@ const styles = StyleSheet.create({
     width: 80,
     textAlign: "center",
   },
-  bibCell: {
-    width: 80,
+  teamOrderCell: {
+    width: 100,
     textAlign: "center",
   },
   nameCell: {
-    width: 200,
-    minWidth: 200,
+    width: 250,
+    minWidth: 250,
   },
   categoryCell: {
     width: 120,

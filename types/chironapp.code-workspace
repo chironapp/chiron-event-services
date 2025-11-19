@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "../../chironapp"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"supabase/functions/**/*.ts": "typescript"
+		},
+		"github.copilot.enable": {
+			"*": true,
+			"typescript": true,
+			"javascript": true
+		}
+	}
+}
