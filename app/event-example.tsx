@@ -30,6 +30,7 @@ export default function EventExamplePage() {
         <EventTopNav
           eventName="Boston Marathon"
           eventStartDate="2024-04-15"
+          eventId="example-event-id"
         />
 
         <ScrollView style={styles.content}>

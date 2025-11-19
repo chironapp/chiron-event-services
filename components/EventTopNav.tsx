@@ -1,6 +1,9 @@
+import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { formatShortDate } from "@/utils/dateUtils";
+import { Link } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface EventTopNavProps {
   /**
@@ -11,6 +14,10 @@ interface EventTopNavProps {
    * The start date of the event
    */
   eventStartDate: string;
+  /**
+   * The event ID for linking to the event details page
+   */
+  eventId: string;
 }
 
 /**
@@ -18,43 +25,42 @@ interface EventTopNavProps {
  *
  * @example
  * ```tsx
- * <EventTopNav eventName="Boston Marathon" eventStartDate="2024-04-15" />
+ * <EventTopNav 
+ *   eventName="Boston Marathon" 
+ *   eventStartDate="2024-04-15"
+ *   eventId="123" 
+ * />
  * ```
  */
 export default function EventTopNav({
   eventName,
   eventStartDate,
+  eventId,
 }: EventTopNavProps) {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-
-  // Format the date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
 
   return (
     <View
       style={[
         styles.container,
-        { backgroundColor: isDark ? "#1a1a1a" : "#ffffff" },
+        {
+          backgroundColor: colors.background,
+          borderBottomColor: colors.border,
+        },
       ]}
     >
       <View style={styles.content}>
-        <Text
-          style={[
-            styles.eventInfo,
-            { color: isDark ? "#ffffff" : "#000000" },
-          ]}
-          numberOfLines={1}
-        >
-          {eventName} | {formatDate(eventStartDate)}
-        </Text>
+        <Link href={`/events/${eventId}`} asChild>
+          <Pressable>
+            <Text
+              style={[styles.eventInfo, { color: colors.link }]}
+              numberOfLines={1}
+            >
+              {eventName} | {formatShortDate(eventStartDate)}
+            </Text>
+          </Pressable>
+        </Link>
       </View>
     </View>
   );
@@ -63,8 +69,6 @@ export default function EventTopNav({
 const styles = StyleSheet.create({
   container: {
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,

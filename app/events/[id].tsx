@@ -172,6 +172,7 @@ export default function EventDetailsPage() {
         <EventTopNav
           eventName={event.title || "Event"}
           eventStartDate={event.race_start_date || ""}
+          eventId={id}
         />
 
         <ScrollView style={styles.content}>

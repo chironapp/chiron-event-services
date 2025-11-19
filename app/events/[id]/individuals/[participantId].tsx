@@ -186,6 +186,7 @@ export default function IndividualResultPage() {
           <EventTopNav
             eventName={event.title || "Event"}
             eventStartDate={event.race_start_date || ""}
+            eventId={participant.public_race_event_id || ""}
           />
         )}
 
