@@ -1,6 +1,6 @@
 /**
  * StartListResultsTable2 - Responsive table component for race results
- * 
+ *
  * This is an improved version of StartListResultsTable with responsive design.
  * Test this component at app/events/[id]/test1.tsx
  */
@@ -10,11 +10,11 @@ import { capitalizeFirst, getNameWithRaceNumber } from "@/utils/nameUtils";
 import { getTeamOrder } from "@/utils/relayRaceUtils";
 import React from "react";
 import {
+  ScrollView,
   StyleSheet,
   Text,
   View,
   useWindowDimensions,
-  ScrollView,
 } from "react-native";
 
 /**
@@ -64,18 +64,19 @@ export function StartListResultsTable2({
   // Calculate responsive widths
   // Max width is 1000, but adapt to screen width
   const containerMaxWidth = Math.min(width - 32, 1000);
-  
+
   // Determine if we should show category column based on screen width
   const showCategory = containerMaxWidth > 600;
-  
+
   // Calculate column widths
   const positionWidth = isUpcoming ? 0 : 80;
-  const teamOrderWidth = showTeamOrder ? 100 : 0;
-  const timeWidth = isUpcoming ? 0 : 120;
-  const categoryWidth = showCategory ? 120 : 0;
-  
+  const teamOrderWidth = showTeamOrder ? 80 : 0;
+  const timeWidth = isUpcoming ? 0 : 90;
+  const categoryWidth = showCategory ? 90 : 0;
+
   // Athlete column gets remaining space
-  const fixedWidths = positionWidth + teamOrderWidth + timeWidth + categoryWidth;
+  const fixedWidths =
+    positionWidth + teamOrderWidth + timeWidth + categoryWidth;
   const athleteWidth = containerMaxWidth - fixedWidths;
 
   const borderColor = isDark ? "#333333" : "#e0e0e0";
@@ -200,12 +201,16 @@ export function StartListResultsTable2({
                 </Text>
               )}
               {showCategory && (
-                <View style={[styles.cell, { borderColor, width: categoryWidth }]}>
+                <View
+                  style={[styles.cell, { borderColor, width: categoryWidth }]}
+                >
                   <Text style={[styles.categoryText, { color: subTextColor }]}>
                     {capitalizeFirst(result.sex_category?.name || "") || "-"}
                   </Text>
                   {result.age_category?.name && (
-                    <Text style={[styles.categoryText, { color: subTextColor }]}>
+                    <Text
+                      style={[styles.categoryText, { color: subTextColor }]}
+                    >
                       {result.age_category.name}
                     </Text>
                   )}
