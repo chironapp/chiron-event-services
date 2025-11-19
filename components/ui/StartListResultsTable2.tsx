@@ -38,7 +38,9 @@ interface StartListResultsTable2Props {
 }
 
 /**
- * Responsive table component to display race start list or results using react-native-super-grid
+ * Responsive table component to display race start list or results.
+ * Uses responsive width calculations to adapt from desktop (~1000px) to mobile widths.
+ * Automatically hides the category column on narrow screens (< 600px) for better mobile display.
  */
 export function StartListResultsTable2({
   results,
