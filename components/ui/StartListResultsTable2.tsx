@@ -1,3 +1,10 @@
+/**
+ * StartListResultsTable2 - Responsive table component for race results
+ * 
+ * This is an improved version of StartListResultsTable with responsive design.
+ * Test this component at app/events/[id]/test1.tsx
+ */
+
 import type { RaceStartListResultWithCategories } from "@/api/results";
 import { capitalizeFirst, getNameWithRaceNumber } from "@/utils/nameUtils";
 import { getTeamOrder } from "@/utils/relayRaceUtils";
