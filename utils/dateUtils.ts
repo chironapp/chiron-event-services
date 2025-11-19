@@ -81,3 +81,23 @@ export function formatTime(centiseconds: number | null): string {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   }
 }
+
+/**
+ * Format a date string to short format (e.g., "April 15, 2024")
+ * 
+ * @param dateString - The date string to format (ISO format)
+ * @returns Formatted date string in "Month Day, Year" format
+ * 
+ * @example
+ * ```typescript
+ * formatShortDate("2024-04-15") // "April 15, 2024"
+ * ```
+ */
+export function formatShortDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
