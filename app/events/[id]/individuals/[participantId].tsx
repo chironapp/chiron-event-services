@@ -1,26 +1,25 @@
 import {
   fetchParticipantById,
+  getResultsCount,
   type RaceStartListResultWithEvent,
 } from "@/api/results";
-import { getResultsCount } from "@/api/results";
 import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { formatDateTime, formatTime } from "@/utils/dateUtils";
-import { capitalizeFirst, getNameWithRaceNumber } from "@/utils/nameUtils";
-import {
-  formatPositionOfTotal,
-  getParticipantStatus,
-} from "@/utils/raceUtils";
 import {
   isSpecialPosition,
   RACE_POSITION_SPECIAL_DESCRIPTIONS,
 } from "@/constants/raceTypes";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { formatDateTime, formatTime } from "@/utils/dateUtils";
+import { capitalizeFirst, getNameWithRaceNumber } from "@/utils/nameUtils";
+import { formatPositionOfTotal, getParticipantStatus } from "@/utils/raceUtils";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -36,6 +35,7 @@ export default function IndividualResultPage() {
   const { participantId } = useLocalSearchParams<{ participantId: string }>();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
   const [participant, setParticipant] =
     useState<RaceStartListResultWithEvent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -158,10 +158,7 @@ export default function IndividualResultPage() {
     participant.last_name,
     participant.race_number
   );
-  const status = getParticipantStatus(
-    participant,
-    event?.race_status || null
-  );
+  const status = getParticipantStatus(participant, event?.race_status || null);
 
   // Determine the finish time to display (net_finish_time100 if available, otherwise finish_time100)
   const displayFinishTime =
@@ -303,14 +300,22 @@ export default function IndividualResultPage() {
                   Team
                 </Text>
                 <View style={styles.infoRow}>
-                  <Text
-                    style={[
-                      styles.infoValue,
-                      { color: isDark ? "#e0e0e0" : "#333333" },
-                    ]}
+                  <Link
+                    href={`/events/${participant.public_race_event_id}/teams/${participant.team_id}`}
+                    asChild
                   >
-                    {participant.team.name}
-                  </Text>
+                    <Pressable>
+                      <Text
+                        style={[
+                          styles.infoValue,
+                          styles.linkText,
+                          { color: colors.link },
+                        ]}
+                      >
+                        {participant.team.name}
+                      </Text>
+                    </Pressable>
+                  </Link>
                 </View>
               </View>
             )}
@@ -562,5 +567,8 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     textAlign: "center",
+  },
+  linkText: {
+    textDecorationLine: "underline",
   },
 });

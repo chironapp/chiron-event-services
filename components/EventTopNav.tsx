@@ -25,10 +25,10 @@ interface EventTopNavProps {
  *
  * @example
  * ```tsx
- * <EventTopNav 
- *   eventName="Boston Marathon" 
+ * <EventTopNav
+ *   eventName="Boston Marathon"
  *   eventStartDate="2024-04-15"
- *   eventId="123" 
+ *   eventId="123"
  * />
  * ```
  */
@@ -54,7 +54,7 @@ export default function EventTopNav({
         <Link href={`/events/${eventId}`} asChild>
           <Pressable>
             <Text
-              style={[styles.eventInfo, { color: colors.link }]}
+              style={[styles.eventInfo, { color: colors.text }]}
               numberOfLines={1}
             >
               {eventName} | {formatShortDate(eventStartDate)}

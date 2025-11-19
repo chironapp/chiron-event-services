@@ -113,9 +113,20 @@ export async function fetchRaceResults(
 
     // Add search filter if provided
     if (search.trim()) {
-      query = query.or(
-        `race_number.eq.${search},first_name.ilike.%${search}%,last_name.ilike.%${search}%`
-      );
+      const searchTerm = search.trim();
+      const isNumeric = /^\d+$/.test(searchTerm);
+      
+      if (isNumeric) {
+        // If search is numeric, search race_number and names
+        query = query.or(
+          `race_number.eq.${searchTerm},first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`
+        );
+      } else {
+        // If search is not numeric, only search names
+        query = query.or(
+          `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`
+        );
+      }
     }
 
     // Add sorting

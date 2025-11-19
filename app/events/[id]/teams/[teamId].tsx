@@ -2,8 +2,8 @@ import {
   fetchTeamById,
   fetchTeamMembers,
   getTeamsCount,
-  type RaceTeamWithEvent,
   type RaceStartListResultWithCategories,
+  type RaceTeamWithEvent,
 } from "@/api/results";
 import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
@@ -12,10 +12,7 @@ import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatDateTime, formatTime } from "@/utils/dateUtils";
-import {
-  formatPositionOfTotal,
-  getTeamStatus,
-} from "@/utils/raceUtils";
+import { formatPositionOfTotal, getTeamStatus } from "@/utils/raceUtils";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -137,15 +134,12 @@ export default function TeamResultPage() {
   }
 
   const event = team.public_race_event;
-  const status = getTeamStatus(
-    team,
-    teamMembers,
-    event?.race_status || null
-  );
+  const status = getTeamStatus(team, teamMembers, event?.race_status || null);
 
   // Calculate started_at and finished_at based on team members
-  const startedAt = teamMembers.find((m) => m.finished_at_local)
-    ?.finished_at_local;
+  const startedAt = teamMembers.find(
+    (m) => m.finished_at_local
+  )?.finished_at_local;
   const finishedAt =
     teamMembers.length > 0
       ? teamMembers
@@ -166,13 +160,12 @@ export default function TeamResultPage() {
         }}
       />
 
-      <View
-        style={[styles.container, { backgroundColor: colors.background }]}
-      >
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         {event && (
           <EventTopNav
             eventName={event.title || "Event"}
             eventStartDate={event.race_start_date || ""}
+            eventId={eventId}
           />
         )}
 
@@ -184,17 +177,12 @@ export default function TeamResultPage() {
 
             {/* Status Section */}
             <View style={styles.section}>
-              <Text
-                style={[styles.sectionHeading, { color: colors.text }]}
-              >
+              <Text style={[styles.sectionHeading, { color: colors.text }]}>
                 Status
               </Text>
               <View style={styles.infoRow}>
                 <Text
-                  style={[
-                    styles.infoValue,
-                    { color: colors.secondaryText },
-                  ]}
+                  style={[styles.infoValue, { color: colors.secondaryText }]}
                 >
                   {status}
                 </Text>
@@ -204,17 +192,12 @@ export default function TeamResultPage() {
             {/* Position Section */}
             {team.position && team.position > 0 && (
               <View style={styles.section}>
-                <Text
-                  style={[styles.sectionHeading, { color: colors.text }]}
-                >
+                <Text style={[styles.sectionHeading, { color: colors.text }]}>
                   Position
                 </Text>
                 <View style={styles.infoRow}>
                   <Text
-                    style={[
-                      styles.infoValue,
-                      { color: colors.secondaryText },
-                    ]}
+                    style={[styles.infoValue, { color: colors.secondaryText }]}
                   >
                     {formatPositionOfTotal(team.position, totalTeams)}
                   </Text>
@@ -224,23 +207,16 @@ export default function TeamResultPage() {
 
             {/* Times Section */}
             <View style={styles.section}>
-              <Text
-                style={[styles.sectionHeading, { color: colors.text }]}
-              >
+              <Text style={[styles.sectionHeading, { color: colors.text }]}>
                 Times
               </Text>
               {team.finish_time100 && (
                 <View style={styles.infoRow}>
-                  <Text
-                    style={[styles.infoLabel, { color: colors.subText }]}
-                  >
+                  <Text style={[styles.infoLabel, { color: colors.subText }]}>
                     Finish Time:
                   </Text>
                   <Text
-                    style={[
-                      styles.infoValue,
-                      { color: colors.secondaryText },
-                    ]}
+                    style={[styles.infoValue, { color: colors.secondaryText }]}
                   >
                     {formatTime(team.finish_time100)}
                   </Text>
@@ -248,16 +224,11 @@ export default function TeamResultPage() {
               )}
               {startedAt && (
                 <View style={styles.infoRow}>
-                  <Text
-                    style={[styles.infoLabel, { color: colors.subText }]}
-                  >
+                  <Text style={[styles.infoLabel, { color: colors.subText }]}>
                     Started At:
                   </Text>
                   <Text
-                    style={[
-                      styles.infoValue,
-                      { color: colors.secondaryText },
-                    ]}
+                    style={[styles.infoValue, { color: colors.secondaryText }]}
                   >
                     {formatDateTime(startedAt)}
                   </Text>
@@ -265,16 +236,11 @@ export default function TeamResultPage() {
               )}
               {finishedAt && (
                 <View style={styles.infoRow}>
-                  <Text
-                    style={[styles.infoLabel, { color: colors.subText }]}
-                  >
+                  <Text style={[styles.infoLabel, { color: colors.subText }]}>
                     Finished At:
                   </Text>
                   <Text
-                    style={[
-                      styles.infoValue,
-                      { color: colors.secondaryText },
-                    ]}
+                    style={[styles.infoValue, { color: colors.secondaryText }]}
                   >
                     {formatDateTime(finishedAt)}
                   </Text>
@@ -284,9 +250,7 @@ export default function TeamResultPage() {
 
             {/* Team Members Section */}
             <View style={styles.section}>
-              <Text
-                style={[styles.sectionHeading, { color: colors.text }]}
-              >
+              <Text style={[styles.sectionHeading, { color: colors.text }]}>
                 Team Members
               </Text>
               <Text style={[styles.resultsCount, { color: colors.subText }]}>

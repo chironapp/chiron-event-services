@@ -4,7 +4,7 @@ import { StyleSheet, View, ViewProps } from "react-native";
 interface MaxWidthContainerProps extends ViewProps {
   /**
    * Maximum width for the container
-   * @default 1200
+   * @default 1000
    */
   maxWidth?: number;
   /**
@@ -29,7 +29,7 @@ interface MaxWidthContainerProps extends ViewProps {
  * ```
  */
 export default function MaxWidthContainer({
-  maxWidth = 1200,
+  maxWidth = 1020,
   center = true,
   children,
   style,

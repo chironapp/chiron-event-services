@@ -5,21 +5,18 @@ import {
 } from "@/api/results";
 import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
-import { SearchBar } from "@/components/events";
+import { EventHeader, SearchBar } from "@/components/events";
 import { StartListResultsTable } from "@/components/results/StartListResultsTable";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import NoResultsFound from "@/components/ui/NoResultsFound";
-import RaceStatusBadge from "@/components/ui/RaceStatusBadge";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { formatEventDate } from "@/utils/dateUtils";
 import { isUpcoming } from "@/utils/eventFilters";
 import { isRelay } from "@/utils/relayRaceUtils";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -177,49 +174,7 @@ export default function EventDetailsPage() {
 
         <ScrollView style={styles.content}>
           <MaxWidthContainer style={styles.contentContainer}>
-            <Text style={[styles.heading, { color: colors.text }]}>
-              {event.title}
-            </Text>
-
-            <View style={styles.dateLocationRow}>
-              <Text
-                style={[styles.dateLocationText, { color: colors.subText }]}
-              >
-                {formatEventDate(event.race_start_date)}
-              </Text>
-              <RaceStatusBadge raceStatus={event.race_status} />
-            </View>
-
-            {event.location && (
-              <Text
-                style={[
-                  styles.dateLocationText,
-                  { color: isDark ? "#cccccc" : "#666666" },
-                ]}
-              >
-                {event.location}
-              </Text>
-            )}
-
-            {event.description && (
-              <Text
-                style={[styles.description, { color: colors.secondaryText }]}
-              >
-                {event.description}
-              </Text>
-            )}
-
-            {event.race_status === "registration_open" &&
-              event.registration_url && (
-                <TouchableOpacity
-                  style={styles.registrationButton}
-                  onPress={() => Linking.openURL(event.registration_url!)}
-                >
-                  <Text style={styles.registrationButtonText}>
-                    Register Now
-                  </Text>
-                </TouchableOpacity>
-              )}
+            <EventHeader event={event} />
 
             <SearchBar
               value={searchQuery}
@@ -299,42 +254,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingBottom: 40,
   },
-  heading: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  dateLocationRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 8,
-  },
-  dateLocationText: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  description: {
-    fontSize: 16,
-    lineHeight: 24,
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  registrationButton: {
-    backgroundColor: Colors.light.success,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    marginTop: 16,
-    marginBottom: 8,
-    alignItems: "center",
-  },
-  registrationButtonText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
+
   sectionHeading: {
     fontSize: 20,
     fontWeight: "600",
