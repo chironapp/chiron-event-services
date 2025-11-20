@@ -385,7 +385,7 @@ export default function IndividualResultPage() {
                       )}
                     </Text>
                   </View>
-                  {participant.sex_category_position && (
+                  {participant.sex_category_position && participant.sex_category && (
                     <View style={styles.infoRow}>
                       <Text
                         style={[
@@ -393,7 +393,7 @@ export default function IndividualResultPage() {
                           { color: isDark ? "#cccccc" : "#666666" },
                         ]}
                       >
-                        Sex Category:
+                        {capitalizeFirst(participant.sex_category.name)}:
                       </Text>
                       <Text
                         style={[
@@ -408,7 +408,7 @@ export default function IndividualResultPage() {
                       </Text>
                     </View>
                   )}
-                  {participant.age_category_position && (
+                  {participant.age_category_position && participant.age_category && (
                     <View style={styles.infoRow}>
                       <Text
                         style={[
@@ -416,7 +416,7 @@ export default function IndividualResultPage() {
                           { color: isDark ? "#cccccc" : "#666666" },
                         ]}
                       >
-                        Age Category:
+                        {participant.age_category.name}:
                       </Text>
                       <Text
                         style={[
