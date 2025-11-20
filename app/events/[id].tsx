@@ -225,6 +225,7 @@ export default function EventDetailsPage() {
                   isUpcoming={eventIsUpcoming}
                   isDark={isDark}
                   showTeamOrder={isRelay(event)}
+                  isRelay={isRelay(event)}
                 />
                 {hasMoreResults && (
                   <TouchableOpacity

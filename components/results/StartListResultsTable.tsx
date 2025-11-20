@@ -46,6 +46,7 @@ interface StartListResultsTableProps {
   isUpcoming: boolean;
   isDark?: boolean;
   showTeamOrder?: boolean;
+  isRelay?: boolean;
 }
 
 /**
@@ -59,6 +60,7 @@ export function StartListResultsTable({
   isUpcoming,
   isDark = false,
   showTeamOrder = false,
+  isRelay = false,
 }: StartListResultsTableProps) {
   const { width } = useWindowDimensions();
 
@@ -132,7 +134,7 @@ export function StartListResultsTable({
                   { color: textColor, borderColor, width: timeWidth },
                 ]}
               >
-                Finish Time
+                {isRelay ? "Net Time" : "Finish Time"}
               </Text>
             )}
             {showCategory && (
@@ -217,7 +219,11 @@ export function StartListResultsTable({
                     { color: textColor, borderColor, width: timeWidth },
                   ]}
                 >
-                  {result.finish_time100
+                  {isRelay
+                    ? result.net_finish_time100
+                      ? formatTime(result.net_finish_time100)
+                      : "-"
+                    : result.finish_time100
                     ? formatTime(result.finish_time100)
                     : "-"}
                 </Text>
