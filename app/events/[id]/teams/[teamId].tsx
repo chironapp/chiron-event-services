@@ -264,6 +264,7 @@ export default function TeamResultPage() {
                   isUpcoming={false}
                   isDark={isDark}
                   showTeamOrder={true}
+                  isRelay={true}
                 />
               )}
             </View>
