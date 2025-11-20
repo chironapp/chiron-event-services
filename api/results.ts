@@ -188,6 +188,54 @@ export async function getResultsCount(eventId: string): Promise<number> {
 }
 
 /**
+ * Get the count of participants in a specific category for an event
+ *
+ * @param eventId - The event ID
+ * @param categoryId - The category ID (sex_category_id or age_category_id)
+ * @param categoryType - The type of category ('sex' or 'age')
+ * @returns Promise<number> - Total number of participants in that category
+ *
+ * @example
+ * ```typescript
+ * // Get count of participants in sex category 5
+ * const count = await getCategoryParticipantsCount('event-123', 5, 'sex');
+ * // Get count of participants in age category 3
+ * const count = await getCategoryParticipantsCount('event-123', 3, 'age');
+ * ```
+ */
+export async function getCategoryParticipantsCount(
+  eventId: string,
+  categoryId: number | null,
+  categoryType: "sex" | "age"
+): Promise<number> {
+  if (!categoryId) {
+    return 0;
+  }
+
+  try {
+    const columnName =
+      categoryType === "sex" ? "sex_category_id" : "age_category_id";
+
+    const { count, error } = await supabase
+      .from("race_start_list_results")
+      .select("*", { count: "exact", head: true })
+      .eq("public_race_event_id", eventId)
+      .eq(columnName, categoryId);
+
+    if (error) {
+      throw new Error(
+        `Failed to get category participants count: ${error.message}`
+      );
+    }
+
+    return count || 0;
+  } catch (error) {
+    console.error("Error getting category participants count:", error);
+    throw error;
+  }
+}
+
+/**
  * Fetch a single participant result by participant ID
  * Includes joined data for categories, team, and event information
  *

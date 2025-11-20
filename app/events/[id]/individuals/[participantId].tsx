@@ -1,5 +1,6 @@
 import {
   fetchParticipantById,
+  getCategoryParticipantsCount,
   getResultsCount,
   type RaceStartListResultWithEvent,
 } from "@/api/results";
@@ -43,6 +44,8 @@ export default function IndividualResultPage() {
   const [totalParticipants, setTotalParticipants] = useState<number | null>(
     null
   );
+  const [sexCategoryTotal, setSexCategoryTotal] = useState<number | null>(null);
+  const [ageCategoryTotal, setAgeCategoryTotal] = useState<number | null>(null);
 
   // Fetch participant data on component mount
   useEffect(() => {
@@ -71,6 +74,34 @@ export default function IndividualResultPage() {
             setTotalParticipants(count);
           } catch (err) {
             console.warn("Failed to fetch participant count:", err);
+          }
+
+          // Fetch sex category participant count
+          if (participantData.sex_category_id) {
+            try {
+              const sexCount = await getCategoryParticipantsCount(
+                participantData.public_race_event_id,
+                participantData.sex_category_id,
+                "sex"
+              );
+              setSexCategoryTotal(sexCount);
+            } catch (err) {
+              console.warn("Failed to fetch sex category count:", err);
+            }
+          }
+
+          // Fetch age category participant count
+          if (participantData.age_category_id) {
+            try {
+              const ageCount = await getCategoryParticipantsCount(
+                participantData.public_race_event_id,
+                participantData.age_category_id,
+                "age"
+              );
+              setAgeCategoryTotal(ageCount);
+            } catch (err) {
+              console.warn("Failed to fetch age category count:", err);
+            }
           }
         }
       } catch (err) {
@@ -372,7 +403,7 @@ export default function IndividualResultPage() {
                       >
                         {formatPositionOfTotal(
                           participant.sex_category_position,
-                          null
+                          sexCategoryTotal
                         )}
                       </Text>
                     </View>
@@ -395,7 +426,7 @@ export default function IndividualResultPage() {
                       >
                         {formatPositionOfTotal(
                           participant.age_category_position,
-                          null
+                          ageCategoryTotal
                         )}
                       </Text>
                     </View>
