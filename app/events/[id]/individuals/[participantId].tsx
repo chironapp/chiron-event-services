@@ -13,7 +13,7 @@ import {
 } from "@/constants/raceTypes";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { formatDateTime, formatTime } from "@/utils/dateUtils";
+import { formatDateTimeLocal, formatTime } from "@/utils/dateUtils";
 import { capitalizeFirst, getNameWithRaceNumber } from "@/utils/nameUtils";
 import { formatPositionOfTotal, getParticipantStatus } from "@/utils/raceUtils";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
@@ -480,7 +480,7 @@ export default function IndividualResultPage() {
                       { color: isDark ? "#e0e0e0" : "#333333" },
                     ]}
                   >
-                    {formatDateTime(event.race_started_at_local)}
+                    {formatDateTimeLocal(event.race_started_at_local)}
                   </Text>
                 </View>
               )}
@@ -500,7 +500,7 @@ export default function IndividualResultPage() {
                       { color: isDark ? "#e0e0e0" : "#333333" },
                     ]}
                   >
-                    {formatDateTime(participant.net_started_at_local)}
+                    {formatDateTimeLocal(participant.net_started_at_local)}
                   </Text>
                 </View>
               )}
@@ -520,7 +520,7 @@ export default function IndividualResultPage() {
                       { color: isDark ? "#e0e0e0" : "#333333" },
                     ]}
                   >
-                    {formatDateTime(participant.finished_at_local)}
+                    {formatDateTimeLocal(participant.finished_at_local)}
                   </Text>
                 </View>
               )}

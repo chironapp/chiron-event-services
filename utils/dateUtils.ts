@@ -53,6 +53,44 @@ export function formatDateTime(dateTimeString: string | null): string {
 }
 
 /**
+ * Format a local datetime string (without timezone info) to a readable time format
+ * This function treats the input as already being in local time, avoiding UTC conversion
+ * 
+ * @param dateTimeString - The datetime string in local time (e.g., "2025-12-11T10:30:45") or null
+ * @returns Formatted time string (e.g., "10:30:45 AM") or "-" if null
+ * 
+ * @example
+ * ```typescript
+ * formatDateTimeLocal("2025-12-11T10:30:45") // "10:30:45 AM" (in local time)
+ * formatDateTimeLocal(null) // "-"
+ * ```
+ */
+export function formatDateTimeLocal(dateTimeString: string | null): string {
+  if (!dateTimeString) return "-";
+  
+  try {
+    // Parse the datetime string as local time by removing any timezone info
+    // and treating the components as local
+    const cleanedString = dateTimeString.replace(/Z|[+-]\d{2}:\d{2}$/i, '');
+    const date = new Date(cleanedString);
+    
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      return "-";
+    }
+    
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+  } catch (error) {
+    return "-";
+  }
+}
+
+/**
  * Format time from centiseconds to readable format (HH:MM:SS or MM:SS)
  * 
  * @param centiseconds - Time in centiseconds (hundredths of a second)
