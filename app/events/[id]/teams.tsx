@@ -7,6 +7,7 @@ import { RelayTeamResultsTable } from "@/components/results/RelayTeamResultsTabl
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import NoResultsFound from "@/components/ui/NoResultsFound";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { Head } from "@/components/utils/Head";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { isUpcoming } from "@/utils/eventFilters";
@@ -161,6 +162,23 @@ export default function EventDetailsPage() {
 
   return (
     <>
+      <Head
+        title={`Team Results – ${event.title} – Chiron Event Services`}
+        description={
+          event.description ||
+          `View team ${eventIsUpcoming ? "start list" : "results"} for ${event.title}`
+        }
+        ogTitle={`Team Results – ${event.title}`}
+        ogDescription={
+          event.description ||
+          `View team ${eventIsUpcoming ? "start list" : "results"} for ${event.title}`
+        }
+        twitterTitle={`Team Results – ${event.title}`}
+        twitterDescription={
+          event.description ||
+          `View team ${eventIsUpcoming ? "start list" : "results"} for ${event.title}`
+        }
+      />
       <Stack.Screen
         options={{
           headerShown: false,

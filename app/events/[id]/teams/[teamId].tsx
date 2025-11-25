@@ -9,6 +9,7 @@ import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
 import { StartListResultsTable } from "@/components/results/StartListResultsTable";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
+import { Head } from "@/components/utils/Head";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatDateTime, formatTime } from "@/utils/dateUtils";
@@ -153,6 +154,14 @@ export default function TeamResultPage() {
 
   return (
     <>
+      <Head
+        title={`${team.name} – ${event?.title || "Event"} – Chiron Event Services`}
+        description={`View team results for ${team.name} in ${event?.title || "Event"}`}
+        ogTitle={`${team.name} – ${event?.title || "Event"}`}
+        ogDescription={`View team results for ${team.name} in ${event?.title || "Event"}`}
+        twitterTitle={`${team.name} – ${event?.title || "Event"}`}
+        twitterDescription={`View team results for ${team.name} in ${event?.title || "Event"}`}
+      />
       <Stack.Screen
         options={{
           headerShown: false,
