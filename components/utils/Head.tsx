@@ -45,16 +45,16 @@ export interface HeadProps {
  * Default values for the Head component
  */
 const defaults: Required<HeadProps> = {
-  title: "Chiron Event Services – Professional Race Timing System",
+  title: "Chiron Event Services – Professional Race Timing",
   description:
     "Chiron Event Services provides professional race timing, start lists, athlete registrations, and real-time race results for sports events of all sizes.",
   keywords:
-    "race timing, endurance training, running, athletics, coaching, performance tracking",
+    "race timing, sport event timing, running, athletics, race start lists, race results",
   author: "Typhon Solutions",
   ogSiteName: "Chiron Event Services",
   ogTitle: "Chiron Event Services – Professional Race Timing",
   ogDescription:
-    "Professional sports timing system delivering accurate race timing, athlete registrations, start lists and instant race results.",
+    "Professional sports timing system. Accurate race timing, athlete registrations, start lists and instant race results.",
   ogImage: "/images/og-image-bg.png",
   ogImageWidth: "1200",
   ogImageHeight: "630",
