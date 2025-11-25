@@ -7,6 +7,7 @@ import {
 import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
+import { Head } from "@/components/utils/Head";
 import {
   isSpecialPosition,
   RACE_POSITION_SPECIAL_DESCRIPTIONS,
@@ -197,6 +198,14 @@ export default function IndividualResultPage() {
 
   return (
     <>
+      <Head
+        title={`${participantName} – ${event?.title || "Event"} – Chiron Event Services`}
+        description={`View race results for ${participantName} in ${event?.title || "Event"}`}
+        ogTitle={`${participantName} – ${event?.title || "Event"}`}
+        ogDescription={`View race results for ${participantName} in ${event?.title || "Event"}`}
+        twitterTitle={`${participantName} – ${event?.title || "Event"}`}
+        twitterDescription={`View race results for ${participantName} in ${event?.title || "Event"}`}
+      />
       <Stack.Screen
         options={{
           headerShown: false,

@@ -10,6 +10,7 @@ import { StartListResultsTable } from "@/components/results/StartListResultsTabl
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import NoResultsFound from "@/components/ui/NoResultsFound";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { Head } from "@/components/utils/Head";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { isUpcoming } from "@/utils/eventFilters";
@@ -170,6 +171,23 @@ export default function EventDetailsPage() {
 
   return (
     <>
+      <Head
+        title={`${event.title} – Chiron Event Services`}
+        description={
+          event.description ||
+          `View ${eventIsUpcoming ? "start list" : "results"} for ${event.title}`
+        }
+        ogTitle={event.title || "Event"}
+        ogDescription={
+          event.description ||
+          `View ${eventIsUpcoming ? "start list" : "results"} for ${event.title}`
+        }
+        twitterTitle={event.title || "Event"}
+        twitterDescription={
+          event.description ||
+          `View ${eventIsUpcoming ? "start list" : "results"} for ${event.title}`
+        }
+      />
       <Stack.Screen
         options={{
           headerShown: false,

@@ -3,6 +3,7 @@ import OrganiserTopNav from "@/components/OrganiserTopNav";
 import OrganiserInfo from "@/components/OrganiserInfo";
 import { SearchBar, EventsToggle, EventsList } from "@/components/events";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
+import { Head } from "@/components/utils/Head";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useState, useEffect } from "react";
@@ -163,6 +164,14 @@ export default function OrganiserDetailsPage() {
 
   return (
     <>
+      <Head
+        title={`${organiser.name} – Chiron Event Services`}
+        description={`View upcoming events and results from ${organiser.name}`}
+        ogTitle={organiser.name}
+        ogDescription={`View upcoming events and results from ${organiser.name}`}
+        twitterTitle={organiser.name}
+        twitterDescription={`View upcoming events and results from ${organiser.name}`}
+      />
       <Stack.Screen
         options={{
           headerShown: false,
