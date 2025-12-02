@@ -2,6 +2,22 @@ import ExpoHead from "expo-router/head";
 import React from "react";
 
 /**
+ * Google Analytics Measurement ID
+ * Format: G-XXXXXXXXXX (a 'G-' prefix followed by alphanumeric characters)
+ */
+const GA_MEASUREMENT_ID = "G-L34GY2HB8Z";
+
+/**
+ * Validates the Google Analytics Measurement ID format
+ * @param id - The measurement ID to validate
+ * @returns true if valid, false otherwise
+ */
+function isValidGaMeasurementId(id: string): boolean {
+  // GA4 measurement IDs follow the pattern G-XXXXXXXXXX (G- followed by exactly 10 alphanumeric characters)
+  return /^G-[A-Z0-9]{10}$/i.test(id);
+}
+
+/**
  * Props for the Head component
  */
 export interface HeadProps {
@@ -126,6 +142,24 @@ export function Head(props: HeadProps) {
 
       {/* Theme */}
       <meta name="theme-color" content={themeColor} />
+
+      {/* Google Analytics - only render if measurement ID is valid */}
+      {isValidGaMeasurementId(GA_MEASUREMENT_ID) && (
+        <>
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          />
+          <script>
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_MEASUREMENT_ID}');
+            `}
+          </script>
+        </>
+      )}
     </ExpoHead>
   );
 }
