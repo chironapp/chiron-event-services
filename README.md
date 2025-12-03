@@ -187,6 +187,39 @@ Build for production:
 npx expo export -p web
 ```
 
+## SEO & Sitemap
+
+### Dynamic SEO Meta Tags
+
+All dynamic pages have SEO-friendly meta tags set based on page context using the `<Head>` component from `/components/utils/Head.tsx`:
+
+- **Event Pages** (`/events/[eventId]`) - Dynamic title, description, and social sharing metadata based on event details
+- **Organiser Pages** (`/organisers/[organiserId]`) - Dynamic title, description, and social sharing metadata based on organiser details
+
+### Sitemap Generation
+
+The sitemap is automatically generated at build time and includes URLs for:
+- Static pages (home, about, organisers)
+- All event pages (`/events/[eventId]`)
+- All organiser pages (`/organisers/[organiserId]`)
+
+Individual and team result pages are intentionally excluded from the sitemap.
+
+#### Generating the Sitemap
+
+The sitemap is generated automatically during the CI/CD build process. To generate it manually:
+
+```bash
+# Ensure environment variables are set
+export EXPO_PUBLIC_SUPABASE_URL=your-supabase-url
+export EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+
+# Generate sitemap
+npm run generate-sitemap
+```
+
+The sitemap is output to `dist/sitemap.xml` and will be available at `https://events.chironapp.com/sitemap.xml`.
+
 ## API Integration & Backend Flexibility
 
 ### Using with Different Backends
