@@ -154,3 +154,26 @@ export async function getOrganisersCount(): Promise<number> {
     throw error;
   }
 }
+
+/**
+ * Fetch all organiser IDs for sitemap generation
+ *
+ * @returns Promise<string[]> - Array of all organiser IDs
+ */
+export async function fetchAllOrganiserIds(): Promise<string[]> {
+  try {
+    const { data, error } = await supabase
+      .from("organisers")
+      .select("id")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw new Error(`Failed to fetch organiser IDs: ${error.message}`);
+    }
+
+    return (data || []).map((organiser) => organiser.id);
+  } catch (error) {
+    console.error("Error fetching organiser IDs:", error);
+    throw error;
+  }
+}

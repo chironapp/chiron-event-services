@@ -58,6 +58,14 @@ jobs:
           echo "📄 Copying index.html to 404.html for GitHub Pages"
           cp dist/index.html dist/404.html
 
+      - name: Generate sitemap
+        run: |
+          echo "🗺️ Generating sitemap.xml"
+          npm run generate-sitemap
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

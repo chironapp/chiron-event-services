@@ -215,3 +215,26 @@ export async function getEventsCount(): Promise<number> {
     throw error;
   }
 }
+
+/**
+ * Fetch all event IDs for sitemap generation
+ *
+ * @returns Promise<string[]> - Array of all event IDs
+ */
+export async function fetchAllEventIds(): Promise<string[]> {
+  try {
+    const { data, error } = await supabase
+      .from("public_race_events")
+      .select("id")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw new Error(`Failed to fetch event IDs: ${error.message}`);
+    }
+
+    return (data || []).map((event) => event.id);
+  } catch (error) {
+    console.error("Error fetching event IDs:", error);
+    throw error;
+  }
+}
