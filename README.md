@@ -35,6 +35,57 @@ Feel free to use some or all of this code for your own race timing projects! The
 - **Theme System**: Complete dark/light mode with consistent color schemes
 - **Layout System**: Responsive grid layouts and card-based designs
 
+## Type Synchronization from Main Repository
+
+⚠️ **Important**: The following files are automatically synchronized from the main chironapp repository and should **NOT** be modified directly in this repository. Any local changes will be overwritten.
+
+### Auto-Synced Files
+
+These files are automatically updated via GitHub Actions when changes are pushed to the `staging` branch of the main repository:
+
+#### Database Types
+
+- `types/supabase.ts` - Database schema types (6 tables only)
+  - Contains: `organisers`, `public_race_events`, `race_athlete_categories`, `race_athlete_category_collections`, `race_start_list_results`, `race_teams`
+  - **DO NOT EDIT**: This file is auto-generated from the main repository's database schema
+
+#### Race-Related Types
+
+- `types/race.ts` - Race entity type definitions
+  - Contains: Race status, types, sport types, and related interfaces
+  - **DO NOT EDIT**: Import paths are automatically updated during sync
+
+#### Constants
+
+- `constants/raceTypes.ts` - Race constants and enums
+  - Contains: Race statuses, race types, sport types, age categories
+  - **DO NOT EDIT**: Shared constants from main repository
+
+### Sync Triggers
+
+Files are automatically synchronized when:
+
+- Changes are pushed to `staging` branch in main repository
+- Changes are detected in any of the tracked files above
+- Manual workflow trigger via GitHub Actions
+
+### Making Changes
+
+If you need to modify any of these files:
+
+1. Make changes in the **main chironapp repository**
+2. Push to `staging` branch - changes will auto-sync to this repository
+3. **Never edit directly** in `chiron-event-services` - changes will be lost
+
+### Workflow Details
+
+- **Source Repository**: `chironapp/chironapp`
+- **Sync Workflow**: `sync-types-to-event-services.yml`
+- **Target Branch**: Current branch in chiron-event-services
+- **Sync Method**: Selective table extraction + import path updates
+
+💡 **Need database schema changes?** Make them in the main repository and they'll automatically sync here within minutes of pushing to staging.
+
 ## Get Started
 
 1. Install dependencies
@@ -199,6 +250,7 @@ All dynamic pages have SEO-friendly meta tags set based on page context using th
 ### Sitemap Generation
 
 The sitemap is automatically generated at build time and includes URLs for:
+
 - Static pages (home, about, organisers)
 - All event pages (`/events/[eventId]`)
 - All organiser pages (`/organisers/[organiserId]`)

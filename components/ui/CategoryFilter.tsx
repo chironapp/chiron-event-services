@@ -20,7 +20,6 @@ const getCategoryOptions = () => {
     { value: "overall", label: "Overall" },
     { value: "female", label: "Female" },
     { value: "male", label: "Male" },
-    { value: "other", label: "Other" },
   ];
 
   // Add age categories grouped by sex
