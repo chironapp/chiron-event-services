@@ -316,6 +316,8 @@ export default function EventDetailsPage() {
                 title={
                   searchQuery
                     ? "No Results Found"
+                    : selectedCategory !== "overall"
+                    ? "No Results in This Category"
                     : eventIsUpcoming
                     ? "Start List Not Yet Available"
                     : "Results Not Yet Available"
@@ -323,6 +325,8 @@ export default function EventDetailsPage() {
                 message={
                   searchQuery
                     ? `No entries match "${searchQuery}"`
+                    : selectedCategory !== "overall"
+                    ? `No results found for the selected category. Try selecting "Overall" to see all results.`
                     : eventIsUpcoming
                     ? "The start list for this event will be available closer to the race date."
                     : "Results will be posted after the race is completed."
