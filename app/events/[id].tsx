@@ -7,6 +7,7 @@ import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
 import { EventHeader, ResultsToggle, SearchBar } from "@/components/events";
 import { StartListResultsTable } from "@/components/results/StartListResultsTable";
+import CategoryFilter from "@/components/ui/CategoryFilter";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import NoResultsFound from "@/components/ui/NoResultsFound";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -37,6 +38,7 @@ export default function EventDetailsPage() {
   const isDark = colorScheme === "dark";
   const colors = Colors[isDark ? "dark" : "light"];
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("overall");
   const [resultsView, setResultsView] = useState("individuals");
   const [event, setEvent] = useState<RaceEventWithOrganiser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -94,8 +96,30 @@ export default function EventDetailsPage() {
           sortOrder: "asc",
         });
 
-        setResults(resultsData.data);
-        setResultsCount(resultsData.count);
+        // Filter results based on selected category
+        let filteredResults = resultsData.data;
+        if (selectedCategory !== "overall") {
+          if (
+            selectedCategory === "female" ||
+            selectedCategory === "male" ||
+            selectedCategory === "other"
+          ) {
+            // Filter by sex category
+            filteredResults = resultsData.data.filter(
+              (result) =>
+                result.sex_category?.name?.toLowerCase() === selectedCategory
+            );
+          } else if (selectedCategory.startsWith("age_")) {
+            // Filter by age category
+            const categoryId = parseInt(selectedCategory.replace("age_", ""));
+            filteredResults = resultsData.data.filter(
+              (result) => result.age_category_id === categoryId
+            );
+          }
+        }
+
+        setResults(filteredResults);
+        setResultsCount(filteredResults.length);
         setHasMoreResults(resultsData.hasNextPage);
       } catch (err) {
         console.error("Error loading results:", err);
@@ -108,7 +132,7 @@ export default function EventDetailsPage() {
     }
 
     loadResults();
-  }, [id, event, searchQuery, resultsPage]);
+  }, [id, event, searchQuery, resultsPage, selectedCategory]);
 
   // Show loading state while fetching event
   if (loading && !event) {
@@ -169,23 +193,50 @@ export default function EventDetailsPage() {
     }
   };
 
+  // Handle category filter change
+  const handleCategoryChange = (category: string) => {
+    console.log("Category selected:", category);
+    setSelectedCategory(category);
+    setResultsPage(1); // Reset to first page when category changes
+  };
+
+  // Determine position type based on selected category
+  const getPositionType = () => {
+    if (
+      selectedCategory === "female" ||
+      selectedCategory === "male" ||
+      selectedCategory === "other"
+    ) {
+      return "sex";
+    } else if (selectedCategory.startsWith("age_")) {
+      return "age";
+    }
+    return "overall";
+  };
+
   return (
     <>
       <Head
         title={`${event.title} – Chiron Event Services`}
         description={
           event.description ||
-          `View ${eventIsUpcoming ? "start list" : "results"} for ${event.title}`
+          `View ${eventIsUpcoming ? "start list" : "results"} for ${
+            event.title
+          }`
         }
         ogTitle={event.title || "Event"}
         ogDescription={
           event.description ||
-          `View ${eventIsUpcoming ? "start list" : "results"} for ${event.title}`
+          `View ${eventIsUpcoming ? "start list" : "results"} for ${
+            event.title
+          }`
         }
         twitterTitle={event.title || "Event"}
         twitterDescription={
           event.description ||
-          `View ${eventIsUpcoming ? "start list" : "results"} for ${event.title}`
+          `View ${eventIsUpcoming ? "start list" : "results"} for ${
+            event.title
+          }`
         }
       />
       <Stack.Screen
@@ -223,6 +274,11 @@ export default function EventDetailsPage() {
               placeholder="Race number or athlete name"
             />
 
+            <CategoryFilter
+              selectedValue={selectedCategory}
+              onSelectionChange={handleCategoryChange}
+            />
+
             {resultsLoading ? (
               <View style={styles.resultsLoadingContainer}>
                 <ActivityIndicator size="small" color={colors.text} />
@@ -244,6 +300,7 @@ export default function EventDetailsPage() {
                   isDark={isDark}
                   showTeamOrder={isRelay(event)}
                   isRelay={isRelay(event)}
+                  positionType={getPositionType()}
                 />
                 {hasMoreResults && (
                   <TouchableOpacity

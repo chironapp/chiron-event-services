@@ -47,6 +47,7 @@ interface StartListResultsTableProps {
   isDark?: boolean;
   showTeamOrder?: boolean;
   isRelay?: boolean;
+  positionType?: "overall" | "age" | "sex";
 }
 
 /**
@@ -61,6 +62,7 @@ export function StartListResultsTable({
   isDark = false,
   showTeamOrder = false,
   isRelay = false,
+  positionType = "overall",
 }: StartListResultsTableProps) {
   const { width } = useWindowDimensions();
 
@@ -76,7 +78,7 @@ export function StartListResultsTable({
   const showCategory = containerMaxWidth > 600;
 
   // Calculate column widths
-  const positionWidth = isUpcoming ? 0 : 80;
+  const positionWidth = isUpcoming ? 0 : 90;
   const teamOrderWidth = showTeamOrder ? 70 : 0;
   const timeWidth = isUpcoming ? 0 : 80;
   const categoryWidth = showCategory ? 90 : 0;
@@ -106,7 +108,11 @@ export function StartListResultsTable({
                   { color: textColor, borderColor, width: positionWidth },
                 ]}
               >
-                Position
+                {positionType === "age"
+                  ? "Category Position"
+                  : positionType === "sex"
+                  ? "Category Position"
+                  : "Position"}
               </Text>
             )}
             {showTeamOrder && (
@@ -168,7 +174,11 @@ export function StartListResultsTable({
                     { color: textColor, borderColor, width: positionWidth },
                   ]}
                 >
-                  {result.position || "-"}
+                  {positionType === "age"
+                    ? result.age_category_position || "-"
+                    : positionType === "sex"
+                    ? result.sex_category_position || "-"
+                    : result.position || "-"}
                 </Text>
               )}
               {showTeamOrder && (
