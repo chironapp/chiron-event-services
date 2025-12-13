@@ -7,6 +7,7 @@
 
 import type { RaceStartListResultWithCategories } from "@/api/results";
 import { Colors } from "@/constants/theme";
+import { formatRacePosition, isSpecialPosition } from "@/constants/raceTypes";
 import { capitalizeFirst, getNameWithRaceNumber } from "@/utils/nameUtils";
 import { getTeamOrder } from "@/utils/relayRaceUtils";
 import { Link } from "expo-router";
@@ -19,6 +20,85 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+
+/**
+ * Format position for display based on position type
+ */
+function formatPositionForDisplay(
+  result: RaceStartListResultWithCategories,
+  positionType: "overall" | "age" | "sex"
+): string {
+  let position: number | null | undefined;
+  
+  switch (positionType) {
+    case "age":
+      position = result.age_category_position;
+      break;
+    case "sex":
+      position = result.sex_category_position;
+      break;
+    default:
+      position = result.position;
+      break;
+  }
+  
+  // Handle null/undefined positions
+  if (position === null || position === undefined) {
+    return "-";
+  }
+  
+  // Format special positions (negative numbers) using the formatRacePosition function
+  if (isSpecialPosition(position)) {
+    return formatRacePosition(position);
+  }
+  
+  // For regular positions, just return the number as string
+  return position.toString();
+}
+
+/**
+ * Sort results to put special positions (DNS, DNF, DQ) at the bottom
+ */
+function sortResultsWithSpecialPositions(
+  results: RaceStartListResultWithCategories[],
+  positionType: "overall" | "age" | "sex"
+): RaceStartListResultWithCategories[] {
+  return [...results].sort((a, b) => {
+    let positionA: number | null | undefined;
+    let positionB: number | null | undefined;
+    
+    switch (positionType) {
+      case "age":
+        positionA = a.age_category_position;
+        positionB = b.age_category_position;
+        break;
+      case "sex":
+        positionA = a.sex_category_position;
+        positionB = b.sex_category_position;
+        break;
+      default:
+        positionA = a.position;
+        positionB = b.position;
+        break;
+    }
+    
+    // Handle null/undefined positions
+    if (positionA == null && positionB == null) return 0;
+    if (positionA == null) return 1;
+    if (positionB == null) return -1;
+    
+    const isSpecialA = isSpecialPosition(positionA);
+    const isSpecialB = isSpecialPosition(positionB);
+    
+    // If both are special or both are regular, sort normally
+    if (isSpecialA === isSpecialB) {
+      return positionA - positionB;
+    }
+    
+    // Special positions go to the bottom
+    return isSpecialA ? 1 : -1;
+  });
+}
 
 /**
  * Format time from centiseconds to readable format (HH:MM:SS or MM:SS)
@@ -69,6 +149,11 @@ export function StartListResultsTable({
   if (results.length === 0) {
     return null;
   }
+
+  // Sort results to put special positions at bottom (only for completed races)
+  const sortedResults = !isUpcoming 
+    ? sortResultsWithSpecialPositions(results, positionType)
+    : results;
 
   // Calculate responsive widths
   // Max width is 1000, but adapt to screen width
@@ -156,7 +241,7 @@ export function StartListResultsTable({
           </View>
 
           {/* Table Body */}
-          {results.map((result, index) => (
+          {sortedResults.map((result, index) => (
             <View
               key={result.id}
               style={[
@@ -174,11 +259,7 @@ export function StartListResultsTable({
                     { color: textColor, borderColor, width: positionWidth },
                   ]}
                 >
-                  {positionType === "age"
-                    ? result.age_category_position || "-"
-                    : positionType === "sex"
-                    ? result.sex_category_position || "-"
-                    : result.position || "-"}
+                  {formatPositionForDisplay(result, positionType)}
                 </Text>
               )}
               {showTeamOrder && (
@@ -189,7 +270,7 @@ export function StartListResultsTable({
                     { color: textColor, borderColor, width: teamOrderWidth },
                   ]}
                 >
-                  {getTeamOrder(result, results) || "-"}
+                  {getTeamOrder(result, sortedResults) || "-"}
                 </Text>
               )}
               <View style={[styles.cell, { borderColor, width: athleteWidth }]}>
