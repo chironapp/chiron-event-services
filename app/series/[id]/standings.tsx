@@ -94,14 +94,20 @@ export default function SeriesStandingsPage() {
       try {
         setStandingsLoading(true);
 
-        const sexCategoryId =
-          selectedCategory === "female"
-            ? 1
-            : selectedCategory === "male"
-            ? 2
-            : selectedCategory === "other"
-            ? 3
-            : undefined;
+        // Determine if filtering by sex category or age category
+        let sexCategoryId: number | undefined;
+        let ageCategoryId: number | undefined;
+
+        if (selectedCategory === "female") {
+          sexCategoryId = 1;
+        } else if (selectedCategory === "male") {
+          sexCategoryId = 2;
+        } else if (selectedCategory === "other") {
+          sexCategoryId = 3;
+        } else if (selectedCategory.startsWith("age_")) {
+          // Age category filter - will be applied client-side
+          ageCategoryId = parseInt(selectedCategory.replace("age_", ""));
+        }
 
         const standingsData = await fetchSeriesStandings(
           id,
@@ -113,9 +119,23 @@ export default function SeriesStandingsPage() {
           "asc"
         );
 
-        setStandings(standingsData.data);
-        setStandingsCount(standingsData.count);
-        setHasMoreStandings(standingsData.hasMore);
+        // Apply age category filter client-side if needed
+        let filteredStandings = standingsData.data;
+        if (ageCategoryId !== undefined) {
+          filteredStandings = standingsData.data.filter(
+            (standing) => standing.age_category_id === ageCategoryId
+          );
+        }
+
+        setStandings(filteredStandings);
+        setStandingsCount(
+          ageCategoryId !== undefined
+            ? filteredStandings.length
+            : standingsData.count
+        );
+        setHasMoreStandings(
+          ageCategoryId !== undefined ? false : standingsData.hasMore
+        );
       } catch (err) {
         console.error("Error loading standings:", err);
         setStandings([]);
