@@ -109,32 +109,43 @@ export default function SeriesStandingsPage() {
           ageCategoryId = parseInt(selectedCategory.replace("age_", ""));
         }
 
+        // Fetch standings without search query (API search doesn't work properly)
+        // We'll filter client-side instead
         const standingsData = await fetchSeriesStandings(
           id,
           standingsPage,
           50,
-          searchQuery,
+          undefined, // Don't send search to API
           sexCategoryId,
           "rank",
           "asc"
         );
 
-        // Apply age category filter client-side if needed
+        // Apply client-side filters
         let filteredStandings = standingsData.data;
+
+        // Filter by age category if selected
         if (ageCategoryId !== undefined) {
-          filteredStandings = standingsData.data.filter(
+          filteredStandings = filteredStandings.filter(
             (standing) => standing.age_category_id === ageCategoryId
           );
         }
 
+        // Apply search filter client-side
+        if (searchQuery && searchQuery.trim()) {
+          const lowerSearch = searchQuery.toLowerCase();
+          filteredStandings = filteredStandings.filter(
+            (standing) =>
+              standing.first_name?.toLowerCase().includes(lowerSearch) ||
+              standing.last_name?.toLowerCase().includes(lowerSearch)
+          );
+        }
+
         setStandings(filteredStandings);
-        setStandingsCount(
-          ageCategoryId !== undefined
-            ? filteredStandings.length
-            : standingsData.count
-        );
+        setStandingsCount(filteredStandings.length);
+        // Disable pagination when client-side filtering is active
         setHasMoreStandings(
-          ageCategoryId !== undefined ? false : standingsData.hasMore
+          !searchQuery && ageCategoryId === undefined && standingsData.hasMore
         );
       } catch (err) {
         console.error("Error loading standings:", err);
