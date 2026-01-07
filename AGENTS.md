@@ -132,12 +132,10 @@ If you need a new color that doesn't exist:
 ```
 app/
   _layout.tsx                    // Root layout
-  (tabs)/                        // Tab group (now top nav)
-    _layout.tsx                  // Tab layout with TopNavigation
-    about.tsx, events.tsx, etc.  // Main pages
+  about.tsx, index.tsx, etc.     // Main pages
   events/
     [id].tsx                     // Event details
-    individual/
+    individuals/
       [participantId].tsx        // Individual participant
 ```
 
