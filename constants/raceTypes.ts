@@ -1,3 +1,5 @@
+// Warning: This file has been synced from chironapp. Do not modify or it will be overwritten.
+
 import type { AgeCategory, Sex } from "@/types/race";
 
 /**
