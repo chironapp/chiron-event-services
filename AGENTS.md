@@ -6,6 +6,56 @@ This document provides guidelines for AI agents working on the Chiron Event Serv
 
 Chiron Event Services is a React Native/Expo web application for managing race events, participants, and results. The app supports both individual and relay races with responsive design for desktop and mobile web browsers.
 
+## ⚠️ Auto-Synced Files - DO NOT EDIT
+
+**CRITICAL**: The following files are automatically synchronized from the main chironapp repository. These files contain a warning comment at the top:
+
+```typescript
+// Warning: This file has been synced from chironapp. Do not modify or it will be overwritten.
+```
+
+### Files That Must Not Be Edited
+
+**Never modify these files directly**. Any changes will be overwritten during the next sync:
+
+#### Database Types
+
+- `types/supabase.ts` - Auto-generated database schema types
+
+#### Race-Related Types
+
+- `types/race.ts` - Race entity type definitions
+- `types/raceSeries.ts` - Race series type definitions
+
+#### Constants
+
+- `constants/raceTypes.ts` - Race constants and enums
+- `constants/sex.ts` - Sex/gender category constants
+
+#### API Functions
+
+- `api/raceOrganiserEventsPublic.ts` - Public race organiser event queries
+- `api/raceOrganisersPublic.ts` - Public race organiser queries
+- `api/raceSeriesPublic.ts` - Public race series queries
+- `api/startListEntriesPublic.ts` - Public start list entry queries
+
+### If Changes Are Needed
+
+If modifications to these files are required:
+
+1. **Stop** - Do not edit the file locally
+2. **Document** - Note what changes are needed and why
+3. **Request** - Inform the user that changes must be made in the upstream chironapp repository
+4. **Explain** - Clarify that the changes will sync automatically after being merged in chironapp
+
+### How to Check
+
+Before editing any file in `types/`, `constants/`, or `api/` directories:
+
+1. Check the first line of the file
+2. If it contains "Warning: This file has been synced from chironapp" → DO NOT EDIT
+3. If no warning is present → Safe to edit
+
 ## Architecture & Technology Stack
 
 - **Framework**: React Native with Expo Router (web-only build)
