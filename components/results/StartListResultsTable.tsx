@@ -6,8 +6,8 @@
  */
 
 import type { RaceStartListResultWithCategories } from "@/api/results";
-import { Colors } from "@/constants/theme";
 import { formatRacePosition, isSpecialPosition } from "@/constants/raceTypes";
+import { Colors } from "@/constants/theme";
 import { capitalizeFirst, getNameWithRaceNumber } from "@/utils/nameUtils";
 import { getTeamOrder } from "@/utils/relayRaceUtils";
 import { Link } from "expo-router";
@@ -29,7 +29,7 @@ function formatPositionForDisplay(
   positionType: "overall" | "age" | "sex"
 ): string {
   let position: number | null | undefined;
-  
+
   switch (positionType) {
     case "age":
       position = result.age_category_position;
@@ -41,17 +41,17 @@ function formatPositionForDisplay(
       position = result.position;
       break;
   }
-  
+
   // Handle null/undefined positions
   if (position === null || position === undefined) {
     return "-";
   }
-  
+
   // Format special positions (negative numbers) using the formatRacePosition function
   if (isSpecialPosition(position)) {
     return formatRacePosition(position);
   }
-  
+
   // For regular positions, just return the number as string
   return position.toString();
 }
@@ -66,7 +66,7 @@ function sortResultsWithSpecialPositions(
   return [...results].sort((a, b) => {
     let positionA: number | null | undefined;
     let positionB: number | null | undefined;
-    
+
     switch (positionType) {
       case "age":
         positionA = a.age_category_position;
@@ -81,20 +81,20 @@ function sortResultsWithSpecialPositions(
         positionB = b.position;
         break;
     }
-    
+
     // Handle null/undefined positions
     if (positionA == null && positionB == null) return 0;
     if (positionA == null) return 1;
     if (positionB == null) return -1;
-    
+
     const isSpecialA = isSpecialPosition(positionA);
     const isSpecialB = isSpecialPosition(positionB);
-    
+
     // If both are special or both are regular, sort normally
     if (isSpecialA === isSpecialB) {
       return positionA - positionB;
     }
-    
+
     // Special positions go to the bottom
     return isSpecialA ? 1 : -1;
   });
@@ -151,7 +151,7 @@ export function StartListResultsTable({
   }
 
   // Sort results to put special positions at bottom (only for completed races)
-  const sortedResults = !isUpcoming 
+  const sortedResults = !isUpcoming
     ? sortResultsWithSpecialPositions(results, positionType)
     : results;
 

@@ -15,12 +15,11 @@ interface EventsToggleProps {
    * Optional container style
    */
   containerStyle?: ViewStyle;
+  /**
+   * Whether to show the Series option (default: false)
+   */
+  showSeries?: boolean;
 }
-
-const toggleOptions = [
-  { label: "Results", value: "results" },
-  { label: "Upcoming", value: "upcoming" },
-];
 
 /**
  * Reusable toggle switch component for switching between upcoming and results events
@@ -30,6 +29,7 @@ const toggleOptions = [
  * <EventsToggle
  *   selectedValue={selectedTab}
  *   onSelectionChange={setSelectedTab}
+ *   showSeries={true}
  * />
  * ```
  */
@@ -37,7 +37,21 @@ export default function EventsToggle({
   selectedValue,
   onSelectionChange,
   containerStyle,
+  showSeries = false,
 }: EventsToggleProps) {
+  const toggleOptions = React.useMemo(() => {
+    const options = [
+      { label: "Results", value: "results" },
+      { label: "Upcoming", value: "upcoming" },
+    ];
+
+    if (showSeries) {
+      options.push({ label: "Series", value: "series" });
+    }
+
+    return options;
+  }, [showSeries]);
+
   return (
     <ToggleSwitch
       options={toggleOptions}

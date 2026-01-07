@@ -45,21 +45,52 @@ These files are automatically updated via GitHub Actions when changes are pushed
 
 #### Database Types
 
-- `types/supabase.ts` - Database schema types (6 tables only)
-  - Contains: `organisers`, `public_race_events`, `race_athlete_categories`, `race_athlete_category_collections`, `race_start_list_results`, `race_teams`
+- `types/supabase.ts` - Database schema types (8 tables)
+  - Contains: `organisers`, `public_race_events`, `race_athlete_categories`, `race_athlete_category_collections`, `race_start_list_results`, `race_teams`, `public_race_event_series`, `series_participant`, `series_standings_scoring_config`
   - **DO NOT EDIT**: This file is auto-generated from the main repository's database schema
 
 #### Race-Related Types
 
 - `types/race.ts` - Race entity type definitions
+
   - Contains: Race status, types, sport types, and related interfaces
   - **DO NOT EDIT**: Import paths are automatically updated during sync
+
+- `types/raceSeries.ts` - Race series type definitions
+  - Contains: Series participant types, scoring methods, aggregation methods
+  - **DO NOT EDIT**: Synced from main repository
 
 #### Constants
 
 - `constants/raceTypes.ts` - Race constants and enums
+
   - Contains: Race statuses, race types, sport types, age categories
   - **DO NOT EDIT**: Shared constants from main repository
+
+- `constants/sex.ts` - Sex/gender category constants
+  - Contains: Sex category IDs, labels, display utilities, and validation logic
+  - **DO NOT EDIT**: Shared constants from main repository
+
+#### API Functions
+
+- `api/raceOrganiserEventsPublic.ts` - Public race organiser event queries
+
+  - Contains: Functions for fetching organiser events with filtering and pagination
+  - **DO NOT EDIT**: Synced from main repository
+
+- `api/raceOrganisersPublic.ts` - Public race organiser queries
+
+  - Contains: Functions for fetching organiser data
+  - **DO NOT EDIT**: Synced from main repository
+
+- `api/raceSeriesPublic.ts` - Public race series queries
+
+  - Contains: Functions for fetching series data, events, and standings
+  - **DO NOT EDIT**: Synced from main repository
+
+- `api/startListEntriesPublic.ts` - Public start list entry queries
+  - Contains: Functions for fetching race start list and result data
+  - **DO NOT EDIT**: Synced from main repository
 
 ### Sync Triggers
 

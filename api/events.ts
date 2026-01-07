@@ -34,6 +34,10 @@ export type RaceEventWithOrganiser = PublicRaceEvent & {
     name: string;
     logo: string | null;
   } | null;
+  public_race_event_series: {
+    id: string;
+    title: string | null;
+  } | null;
 };
 
 /**
@@ -173,6 +177,10 @@ export async function fetchEventById(
           id,
           name,
           logo
+        ),
+        public_race_event_series (
+          id,
+          title
         )
       `
       )

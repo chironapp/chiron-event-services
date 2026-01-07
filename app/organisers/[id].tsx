@@ -1,26 +1,30 @@
+import { fetchEvents, type RaceEventWithOrganiser } from "@/api/events";
+import { fetchOrganiserById } from "@/api/organisers";
+import { fetchOrganiserRaceEventSeries } from "@/api/raceSeriesPublic";
 import Footer from "@/components/Footer";
-import OrganiserTopNav from "@/components/OrganiserTopNav";
 import OrganiserInfo from "@/components/OrganiserInfo";
-import { SearchBar, EventsToggle, EventsList } from "@/components/events";
+import OrganiserTopNav from "@/components/OrganiserTopNav";
+import { EventsList, EventsToggle, SearchBar } from "@/components/events";
+import SeriesList from "@/components/events/SeriesList";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import { Head } from "@/components/utils/Head";
+import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { Stack, useLocalSearchParams } from "expo-router";
-import React, { useState, useEffect } from "react";
+import type { Organiser } from "@/lib/supabase";
+import type { PublicRaceEventSeries } from "@/types/race";
 import {
+  filterResultsEvents,
+  filterUpcomingEvents,
+} from "@/utils/eventFilters";
+import { Stack, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
   View,
-  ActivityIndicator,
 } from "react-native";
-import { fetchEvents, type RaceEventWithOrganiser } from "@/api/events";
-import { fetchOrganiserById } from "@/api/organisers";
-import type { Organiser } from "@/lib/supabase";
-import {
-  filterUpcomingEvents,
-  filterResultsEvents,
-} from "@/utils/eventFilters";
 
 /**
  * Organiser details page component showing organiser information and their events
@@ -31,12 +35,15 @@ export default function OrganiserDetailsPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const colors = Colors[isDark ? "dark" : "light"];
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState("upcoming");
   const [events, setEvents] = useState<RaceEventWithOrganiser[]>([]);
+  const [series, setSeries] = useState<PublicRaceEventSeries[]>([]);
   const [organiser, setOrganiser] = useState<Organiser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [seriesLoading, setSeriesLoading] = useState(false);
 
   // Fetch organiser and events on component mount
   useEffect(() => {
@@ -65,6 +72,23 @@ export default function OrganiserDetailsPage() {
 
         setOrganiser(organiserData);
         setEvents(eventsResult.data);
+
+        // Fetch series when tab is selected or on initial load
+        if (selectedTab === "series") {
+          setSeriesLoading(true);
+          try {
+            const seriesResult = await fetchOrganiserRaceEventSeries(
+              id,
+              0,
+              100
+            );
+            setSeries(seriesResult.data as PublicRaceEventSeries[]);
+          } catch (seriesErr) {
+            console.error("Error loading series:", seriesErr);
+          } finally {
+            setSeriesLoading(false);
+          }
+        }
       } catch (err) {
         console.error("Error loading organiser data:", err);
         setError(err instanceof Error ? err.message : "Failed to load data");
@@ -74,7 +98,26 @@ export default function OrganiserDetailsPage() {
     }
 
     loadData();
-  }, [id]);
+  }, [id, selectedTab]);
+
+  // Fetch series when series tab is selected
+  useEffect(() => {
+    async function loadSeries() {
+      if (!id || selectedTab !== "series" || series.length > 0) return;
+
+      try {
+        setSeriesLoading(true);
+        const seriesResult = await fetchOrganiserRaceEventSeries(id, 0, 100);
+        setSeries(seriesResult.data as PublicRaceEventSeries[]);
+      } catch (err) {
+        console.error("Error loading series:", err);
+      } finally {
+        setSeriesLoading(false);
+      }
+    }
+
+    loadSeries();
+  }, [id, selectedTab]);
 
   // Filter events based on selected tab and search query
   const filteredEvents = React.useMemo(() => {
@@ -96,6 +139,19 @@ export default function OrganiserDetailsPage() {
     return filtered;
   }, [events, selectedTab, searchQuery]);
 
+  // Filter series based on search query
+  const filteredSeries = React.useMemo(() => {
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      return series.filter(
+        (s) =>
+          s.title?.toLowerCase().includes(query) ||
+          s.description?.toLowerCase().includes(query)
+      );
+    }
+    return series;
+  }, [series, searchQuery]);
+
   // Show loading state while fetching organiser
   if (loading && !organiser) {
     return (
@@ -107,22 +163,11 @@ export default function OrganiserDetailsPage() {
           }}
         />
         <View
-          style={[
-            styles.container,
-            { backgroundColor: isDark ? "#000000" : "#ffffff" },
-          ]}
+          style={[styles.container, { backgroundColor: colors.background }]}
         >
           <View style={styles.loadingContainer}>
-            <ActivityIndicator
-              size="large"
-              color={isDark ? "#ffffff" : "#000000"}
-            />
-            <Text
-              style={[
-                styles.loadingText,
-                { color: isDark ? "#cccccc" : "#666666" },
-              ]}
-            >
+            <ActivityIndicator size="large" color={colors.text} />
+            <Text style={[styles.loadingText, { color: colors.subText }]}>
               Loading organiser...
             </Text>
           </View>
@@ -142,18 +187,10 @@ export default function OrganiserDetailsPage() {
           }}
         />
         <View
-          style={[
-            styles.container,
-            { backgroundColor: isDark ? "#000000" : "#ffffff" },
-          ]}
+          style={[styles.container, { backgroundColor: colors.background }]}
         >
           <View style={styles.errorContainer}>
-            <Text
-              style={[
-                styles.errorText,
-                { color: isDark ? "#ff6b6b" : "#d32f2f" },
-              ]}
-            >
+            <Text style={[styles.errorText, { color: colors.error }]}>
               {error || "Organiser not found"}
             </Text>
           </View>
@@ -179,44 +216,45 @@ export default function OrganiserDetailsPage() {
         }}
       />
 
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: isDark ? "#000000" : "#ffffff" },
-        ]}
-      >
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <OrganiserTopNav organiserName={organiser.name} />
 
         <ScrollView style={styles.content}>
           <MaxWidthContainer style={styles.contentContainer}>
             <OrganiserInfo organiser={organiser} />
 
-            <SearchBar
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
+            <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
 
             <EventsToggle
               selectedValue={selectedTab}
               onSelectionChange={setSelectedTab}
+              showSeries={true}
             />
 
-            <Text
-              style={[
-                styles.sectionHeading,
-                { color: isDark ? "#ffffff" : "#000000" },
-              ]}
-            >
-              {selectedTab === "upcoming" ? "Upcoming Events" : "Past Events"}
+            <Text style={[styles.sectionHeading, { color: colors.text }]}>
+              {selectedTab === "upcoming"
+                ? "Upcoming Events"
+                : selectedTab === "results"
+                ? "Past Events"
+                : "Series"}
             </Text>
 
-            <EventsList
-              events={filteredEvents}
-              loading={loading}
-              error={null}
-              selectedTab={selectedTab}
-              searchQuery={searchQuery}
-            />
+            {selectedTab === "series" ? (
+              <SeriesList
+                series={filteredSeries}
+                loading={seriesLoading}
+                error={null}
+                searchQuery={searchQuery}
+              />
+            ) : (
+              <EventsList
+                events={filteredEvents}
+                loading={loading}
+                error={null}
+                selectedTab={selectedTab}
+                searchQuery={searchQuery}
+              />
+            )}
 
             <Footer />
           </MaxWidthContainer>

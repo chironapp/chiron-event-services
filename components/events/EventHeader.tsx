@@ -2,9 +2,11 @@ import RaceStatusBadge from "@/components/ui/RaceStatusBadge";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatEventDate } from "@/utils/dateUtils";
+import { Link } from "expo-router";
 import React from "react";
 import {
   Linking,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,6 +21,10 @@ interface EventHeaderProps {
     location: string | null;
     description: string | null;
     registration_url: string | null;
+    public_race_event_series?: {
+      id: string;
+      title: string | null;
+    } | null;
   };
 }
 
@@ -46,6 +52,18 @@ export default function EventHeader({ event }: EventHeaderProps) {
         <Text style={[styles.dateLocationText, { color: colors.subText }]}>
           {event.location}
         </Text>
+      )}
+
+      {event.public_race_event_series && (
+        <View style={styles.seriesRow}>
+          <Link href={`/series/${event.public_race_event_series.id}`} asChild>
+            <Pressable>
+              <Text style={[styles.seriesLink, { color: colors.link }]}>
+                {event.public_race_event_series.title}
+              </Text>
+            </Pressable>
+          </Link>
+        </View>
       )}
 
       {event.description && (
@@ -85,6 +103,21 @@ const styles = StyleSheet.create({
   dateLocationText: {
     fontSize: 16,
     lineHeight: 24,
+  },
+  seriesRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  seriesLabel: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  seriesLink: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "600",
+    textDecorationLine: "underline",
   },
   description: {
     fontSize: 16,
