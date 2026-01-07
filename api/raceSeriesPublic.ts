@@ -419,3 +419,206 @@ export async function fetchPublicRaceEventsBySeries(
     throw error;
   }
 }
+
+/**
+ * Series participant event result with event details
+ */
+export interface SeriesParticipantEventResult {
+  id: string;
+  public_race_event_id: string;
+  series_participant_id: string;
+  first_name: string;
+  last_name: string;
+  race_number: number;
+  position: number | null;
+  sex_category_position: number | null;
+  age_category_position: number | null;
+  finish_time100: number | null;
+  net_finish_time100: number | null;
+  // Joined event data
+  event_name: string | null;
+  event_date: string | null;
+}
+
+/**
+ * Raw series participant event result from Supabase with joined event data
+ */
+interface SeriesParticipantEventResultRaw {
+  id: string;
+  public_race_event_id: string;
+  series_participant_id: string | null;
+  first_name: string;
+  last_name: string;
+  race_number: number;
+  position: number | null;
+  sex_category_position: number | null;
+  age_category_position: number | null;
+  finish_time100: number | null;
+  net_finish_time100: number | null;
+  public_race_event?: {
+    title: string | null;
+    race_start_date: string | null;
+  } | null;
+}
+
+/**
+ * Fetch all event results for a specific series participant
+ *
+ * @param seriesParticipantId - The ID of the series participant
+ * @returns Promise with array of event results
+ *
+ * @throws {Error} When database query fails
+ *
+ * @example
+ * ```typescript
+ * const results = await fetchSeriesParticipantEventResults(
+ *   "participant-123"
+ * );
+ * console.log(`Found ${results.length} event results`);
+ * ```
+ */
+export async function fetchSeriesParticipantEventResults(
+  seriesParticipantId: string
+): Promise<SeriesParticipantEventResult[]> {
+  try {
+    // Build the query with joins for event data
+    const { data, error } = await supabase
+      .from("race_start_list_results")
+      .select(
+        `
+        id,
+        public_race_event_id,
+        series_participant_id,
+        first_name,
+        last_name,
+        race_number,
+        position,
+        sex_category_position,
+        age_category_position,
+        finish_time100,
+        net_finish_time100,
+        public_race_event:public_race_events(title, race_start_date)
+      `
+      )
+      .eq("series_participant_id", seriesParticipantId)
+      .order("public_race_event.race_start_date", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching series participant event results:", error);
+      throw error;
+    }
+
+    // Transform the data to flatten nested event data
+    const transformedData: SeriesParticipantEventResult[] = (data || []).map(
+      (item: SeriesParticipantEventResultRaw) => ({
+        id: item.id,
+        public_race_event_id: item.public_race_event_id,
+        series_participant_id: item.series_participant_id || "",
+        first_name: item.first_name,
+        last_name: item.last_name,
+        race_number: item.race_number,
+        position: item.position,
+        sex_category_position: item.sex_category_position,
+        age_category_position: item.age_category_position,
+        finish_time100: item.finish_time100,
+        net_finish_time100: item.net_finish_time100,
+        event_name: item.public_race_event?.title || null,
+        event_date: item.public_race_event?.race_start_date || null,
+      })
+    );
+
+    return transformedData;
+  } catch (error) {
+    console.error(
+      "Unexpected error fetching series participant event results:",
+      error
+    );
+    throw error;
+  }
+}
+
+/**
+ * Fetch a single series standing by series participant ID
+ *
+ * @param seriesId - The series ID
+ * @param seriesParticipantId - The series participant ID
+ * @returns Promise with series standing or null if not found
+ *
+ * @throws {Error} When database query fails
+ *
+ * @example
+ * ```typescript
+ * const standing = await fetchSeriesStandingByParticipantId(
+ *   "series-123",
+ *   "participant-456"
+ * );
+ * if (standing) {
+ *   console.log(`Rank: ${standing.rank}, Points: ${standing.total_points}`);
+ * }
+ * ```
+ */
+export async function fetchSeriesStandingByParticipantId(
+  seriesId: string,
+  seriesParticipantId: string
+): Promise<SeriesStandingsResult | null> {
+  try {
+    // Build the query with joins for participant and category data
+    const { data, error } = await supabase
+      .from("series_standings")
+      .select(
+        `
+        *,
+        series_participant!inner(
+          first_name,
+          last_name,
+          sex_category_id,
+          age_category_id,
+          age_category:race_athlete_categories!series_participant_age_category_id_fkey(name),
+          sex_category:race_athlete_categories!series_participant_sex_category_id_fkey(name)
+        )
+      `
+      )
+      .eq("series_id", seriesId)
+      .eq("series_participant_id", seriesParticipantId)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") {
+        // Not found
+        return null;
+      }
+      console.error("Error fetching series standing by participant ID:", error);
+      throw error;
+    }
+
+    // Transform the data to flatten nested objects
+    const item = data as SeriesStandingsRaw;
+    const participant = item.series_participant;
+
+    return {
+      id: item.id,
+      series_id: item.series_id,
+      series_participant_id: item.series_participant_id,
+      rank: item.rank,
+      total_points: item.total_points,
+      average_points: item.average_points,
+      total_time_ms: item.total_time_ms,
+      average_time_ms: item.average_time_ms,
+      races_counted: item.races_counted,
+      created_at: item.created_at,
+      updated_at: item.updated_at,
+      first_name: participant?.first_name || "",
+      last_name: participant?.last_name || "",
+      sex_category_id: participant?.sex_category_id || null,
+      age_category_id: participant?.age_category_id || null,
+      age_category_name: participant?.age_category?.name || null,
+      sex_category_name: participant?.sex_category?.name || null,
+    };
+  } catch (error) {
+    console.error(
+      "Unexpected error fetching series standing by participant ID:",
+      error
+    );
+    throw error;
+  }
+}
