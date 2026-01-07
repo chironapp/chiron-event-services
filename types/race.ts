@@ -4,7 +4,7 @@ import {
   SPORT_TYPES,
   type RacePosition,
 } from "@/constants/raceTypes";
-import { SEX_CATEGORY_IDS, type SexCategoryId } from "@/constants/sex";
+import { SEX_CATEGORY_IDS, type SexCategoryId } from "../constants/sex";
 import type { Database } from "./supabase";
 
 /**
@@ -110,6 +110,54 @@ export interface PublicRaceEventUpdate
 }
 
 /**
+ * Base public race event series row from database with enhanced typing
+ * Extends the auto-generated Supabase type with our custom enum types
+ */
+type DatabasePublicRaceEventSeriesRow =
+  Database["public"]["Tables"]["public_race_event_series"]["Row"];
+export interface PublicRaceEventSeries
+  extends Omit<
+    DatabasePublicRaceEventSeriesRow,
+    "race_type" | "sport_type" | "series_status"
+  > {
+  race_type: RaceType;
+  sport_type: SportType;
+  series_status: RaceStatus | null;
+}
+
+/**
+ * Public race event series insert type with enhanced typing
+ * Used for creating new race event series with type-safe enum values
+ */
+type DatabasePublicRaceEventSeriesInsert =
+  Database["public"]["Tables"]["public_race_event_series"]["Insert"];
+export interface PublicRaceEventSeriesInsert
+  extends Omit<
+    DatabasePublicRaceEventSeriesInsert,
+    "race_type" | "sport_type" | "series_status"
+  > {
+  race_type?: RaceType;
+  sport_type?: SportType;
+  series_status?: RaceStatus | null;
+}
+
+/**
+ * Public race event series update type with enhanced typing
+ * Used for updating existing race event series with type-safe enum values
+ */
+type DatabasePublicRaceEventSeriesUpdate =
+  Database["public"]["Tables"]["public_race_event_series"]["Update"];
+export interface PublicRaceEventSeriesUpdate
+  extends Omit<
+    DatabasePublicRaceEventSeriesUpdate,
+    "race_type" | "sport_type" | "series_status"
+  > {
+  race_type?: RaceType;
+  sport_type?: SportType;
+  series_status?: RaceStatus | null;
+}
+
+/**
  * Type guard to check if a value is a valid race type
  * @param value - Value to check
  * @returns True if value is a valid race type
@@ -168,6 +216,11 @@ export interface PublicRaceEventDatabase {
         Row: PublicRaceEvent;
         Insert: PublicRaceEventInsert;
         Update: PublicRaceEventUpdate;
+      };
+      public_race_event_series: {
+        Row: PublicRaceEventSeries;
+        Insert: PublicRaceEventSeriesInsert;
+        Update: PublicRaceEventSeriesUpdate;
       };
       race_start_list_results: {
         Row: RaceStartListResult;

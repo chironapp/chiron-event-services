@@ -56,6 +56,7 @@ export type Database = {
           record_age_category: boolean
           record_sex_category: boolean
           registration_url: string | null
+          series_id: string | null
           sport_type: number
           title: string | null
           updated_at: string
@@ -76,6 +77,7 @@ export type Database = {
           record_age_category?: boolean
           record_sex_category?: boolean
           registration_url?: string | null
+          series_id?: string | null
           sport_type?: number
           title?: string | null
           updated_at?: string
@@ -96,6 +98,7 @@ export type Database = {
           record_age_category?: boolean
           record_sex_category?: boolean
           registration_url?: string | null
+          series_id?: string | null
           sport_type?: number
           title?: string | null
           updated_at?: string
@@ -106,6 +109,13 @@ export type Database = {
             columns: ["organiser_id"]
             isOneToOne: false
             referencedRelation: "organisers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_race_events_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "public_race_event_series"
             referencedColumns: ["id"]
           },
         ]
@@ -184,6 +194,7 @@ export type Database = {
           position: number | null
           public_race_event_id: string
           race_number: number
+          series_participant_id: string | null
           sex_category_id: number | null
           sex_category_position: number | null
           team_id: string | null
@@ -203,6 +214,7 @@ export type Database = {
           position?: number | null
           public_race_event_id: string
           race_number: number
+          series_participant_id?: string | null
           sex_category_id?: number | null
           sex_category_position?: number | null
           team_id?: string | null
@@ -222,6 +234,7 @@ export type Database = {
           position?: number | null
           public_race_event_id?: string
           race_number?: number
+          series_participant_id?: string | null
           sex_category_id?: number | null
           sex_category_position?: number | null
           team_id?: string | null
@@ -240,6 +253,13 @@ export type Database = {
             columns: ["public_race_event_id"]
             isOneToOne: false
             referencedRelation: "public_race_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_start_list_results_series_participant_id_fkey"
+            columns: ["series_participant_id"]
+            isOneToOne: false
+            referencedRelation: "series_participant"
             referencedColumns: ["id"]
           },
           {
@@ -295,6 +315,160 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+            public_race_event_series: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image: string | null
+          include_teams: boolean
+          organiser_id: string
+          race_type: number
+          record_age_category: boolean
+          record_sex_category: boolean
+          registration_url: string | null
+          scoring_config_id: string | null
+          series_status: string | null
+          sport_type: number
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string | null
+          include_teams?: boolean
+          organiser_id: string
+          race_type?: number
+          record_age_category?: boolean
+          record_sex_category?: boolean
+          registration_url?: string | null
+          scoring_config_id?: string | null
+          series_status?: string | null
+          sport_type?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string | null
+          include_teams?: boolean
+          organiser_id?: string
+          race_type?: number
+          record_age_category?: boolean
+          record_sex_category?: boolean
+          registration_url?: string | null
+          scoring_config_id?: string | null
+          series_status?: string | null
+          sport_type?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_public_race_event_series_scoring_config_id"
+            columns: ["scoring_config_id"]
+            isOneToOne: false
+            referencedRelation: "series_standings_scoring_config"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_race_event_series_organiser_id_fkey"
+            columns: ["organiser_id"]
+            isOneToOne: false
+            referencedRelation: "organisers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+            series_participant: {
+        Row: {
+          age_category_id: number | null
+          created_at: string
+          first_name: string
+          id: string
+          last_name: string
+          series_id: string
+          sex_category_id: number | null
+          updated_at: string
+        }
+        Insert: {
+          age_category_id?: number | null
+          created_at?: string
+          first_name: string
+          id?: string
+          last_name: string
+          series_id: string
+          sex_category_id?: number | null
+          updated_at?: string
+        }
+        Update: {
+          age_category_id?: number | null
+          created_at?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          series_id?: string
+          sex_category_id?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_participant_age_category_id_fkey"
+            columns: ["age_category_id"]
+            isOneToOne: false
+            referencedRelation: "race_athlete_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "series_participant_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "public_race_event_series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "series_participant_sex_category_id_fkey"
+            columns: ["sex_category_id"]
+            isOneToOne: false
+            referencedRelation: "race_athlete_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+            series_standings_scoring_config: {
+        Row: {
+          aggregation_method: string
+          best_n_results: number | null
+          created_at: string
+          exclude_dnf: boolean
+          id: string
+          scoring_method: string
+          updated_at: string
+        }
+        Insert: {
+          aggregation_method: string
+          best_n_results?: number | null
+          created_at?: string
+          exclude_dnf?: boolean
+          id?: string
+          scoring_method: string
+          updated_at?: string
+        }
+        Update: {
+          aggregation_method?: string
+          best_n_results?: number | null
+          created_at?: string
+          exclude_dnf?: boolean
+          id?: string
+          scoring_method?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {
