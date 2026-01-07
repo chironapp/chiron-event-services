@@ -33,8 +33,7 @@ interface SeriesParticipantEventResultsTableProps {
  * Format position for display, handling null values
  */
 function formatPosition(position: number | null): string {
-  if (position === null || position === undefined) return "-";
-  return position.toString();
+  return position?.toString() ?? "-";
 }
 
 /**
@@ -111,7 +110,7 @@ export function SeriesParticipantEventResultsTable({
           {/* Table Body */}
           {results.map((result, index) => {
             // Use net finish time if available, otherwise use finish time
-            const displayTime = result.net_finish_time100 || result.finish_time100;
+            const displayTime = result.net_finish_time100 ?? result.finish_time100;
 
             return (
               <View

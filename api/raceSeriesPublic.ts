@@ -512,7 +512,7 @@ export async function fetchSeriesParticipantEventResults(
       (item: SeriesParticipantEventResultRaw) => ({
         id: item.id,
         public_race_event_id: item.public_race_event_id,
-        series_participant_id: item.series_participant_id || "",
+        series_participant_id: item.series_participant_id ?? "",
         first_name: item.first_name,
         last_name: item.last_name,
         race_number: item.race_number,
@@ -521,8 +521,8 @@ export async function fetchSeriesParticipantEventResults(
         age_category_position: item.age_category_position,
         finish_time100: item.finish_time100,
         net_finish_time100: item.net_finish_time100,
-        event_name: item.public_race_event?.title || null,
-        event_date: item.public_race_event?.race_start_date || null,
+        event_name: item.public_race_event?.title ?? null,
+        event_date: item.public_race_event?.race_start_date ?? null,
       })
     );
 

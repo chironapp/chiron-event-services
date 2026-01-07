@@ -28,8 +28,7 @@ import {
  * Format points for display, handling null values
  */
 function formatPoints(points: number | null): string {
-  if (points === null || points === undefined) return "-";
-  return points.toFixed(1);
+  return points?.toFixed(1) ?? "-";
 }
 
 /**
