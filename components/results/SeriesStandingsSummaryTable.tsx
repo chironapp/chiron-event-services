@@ -9,9 +9,11 @@ import { fetchSeriesStandings } from "@/api/raceSeriesPublic";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { capitalizeFirst } from "@/utils/nameUtils";
+import { Link } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -206,9 +208,22 @@ export function SeriesStandingsSummaryTable({
 
               {/* Name */}
               <View style={[styles.cell, { borderColor, width: nameWidth }]}>
-                <Text style={[styles.nameText, { color: textColor }]}>
-                  {standing.first_name} {standing.last_name}
-                </Text>
+                <Link
+                  href={`/series/${seriesId}/standings/${standing.series_participant_id}`}
+                  asChild
+                >
+                  <Pressable>
+                    <Text
+                      style={[
+                        styles.nameText,
+                        styles.linkText,
+                        { color: colors.link },
+                      ]}
+                    >
+                      {standing.first_name} {standing.last_name}
+                    </Text>
+                  </Pressable>
+                </Link>
               </View>
 
               {/* Points */}
@@ -278,6 +293,9 @@ const styles = StyleSheet.create({
   },
   nameText: {
     fontSize: 14,
+  },
+  linkText: {
+    textDecorationLine: "underline",
   },
   categoryText: {
     fontSize: 12,
