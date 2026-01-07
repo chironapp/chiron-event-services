@@ -500,8 +500,7 @@ export async function fetchSeriesParticipantEventResults(
         public_race_event:public_race_events(title, race_start_date)
       `
       )
-      .eq("series_participant_id", seriesParticipantId)
-      .order("public_race_event.race_start_date", { ascending: false });
+      .eq("series_participant_id", seriesParticipantId);
 
     if (error) {
       console.error("Error fetching series participant event results:", error);
@@ -526,6 +525,14 @@ export async function fetchSeriesParticipantEventResults(
         event_date: item.public_race_event?.race_start_date || null,
       })
     );
+
+    // Sort by event date (most recent first)
+    transformedData.sort((a, b) => {
+      if (!a.event_date && !b.event_date) return 0;
+      if (!a.event_date) return 1;
+      if (!b.event_date) return -1;
+      return new Date(b.event_date).getTime() - new Date(a.event_date).getTime();
+    });
 
     return transformedData;
   } catch (error) {
