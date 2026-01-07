@@ -531,7 +531,9 @@ export async function fetchSeriesParticipantEventResults(
       if (!a.event_date && !b.event_date) return 0;
       if (!a.event_date) return 1;
       if (!b.event_date) return -1;
-      return new Date(b.event_date).getTime() - new Date(a.event_date).getTime();
+      return (
+        new Date(b.event_date).getTime() - new Date(a.event_date).getTime()
+      );
     });
 
     return transformedData;
