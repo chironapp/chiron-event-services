@@ -442,6 +442,63 @@ export type Database = {
           },
         ]
       }
+            series_standings: {
+        Row: {
+          average_points: number | null
+          average_time_ms: number | null
+          created_at: string
+          id: string
+          races_counted: number
+          rank: number | null
+          series_id: string
+          series_participant_id: string
+          total_points: number | null
+          total_time_ms: number | null
+          updated_at: string
+        }
+        Insert: {
+          average_points?: number | null
+          average_time_ms?: number | null
+          created_at?: string
+          id?: string
+          races_counted: number
+          rank?: number | null
+          series_id: string
+          series_participant_id: string
+          total_points?: number | null
+          total_time_ms?: number | null
+          updated_at?: string
+        }
+        Update: {
+          average_points?: number | null
+          average_time_ms?: number | null
+          created_at?: string
+          id?: string
+          races_counted?: number
+          rank?: number | null
+          series_id?: string
+          series_participant_id?: string
+          total_points?: number | null
+          total_time_ms?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_standings_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "public_race_event_series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "series_standings_series_participant_id_fkey"
+            columns: ["series_participant_id"]
+            isOneToOne: false
+            referencedRelation: "series_participant"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
             series_standings_scoring_config: {
         Row: {
           aggregation_method: string
