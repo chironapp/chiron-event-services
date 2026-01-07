@@ -15,10 +15,11 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import type { PublicRaceEventSeries } from "@/types/race";
 import { capitalizeFirst } from "@/utils/nameUtils";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -342,11 +343,22 @@ export default function SeriesStandingsPage() {
                               { borderColor, width: nameWidth },
                             ]}
                           >
-                            <Text
-                              style={[styles.nameText, { color: textColor }]}
+                            <Link
+                              href={`/series/${id}/standings/${standing.series_participant_id}`}
+                              asChild
                             >
-                              {standing.first_name} {standing.last_name}
-                            </Text>
+                              <Pressable>
+                                <Text
+                                  style={[
+                                    styles.nameText,
+                                    styles.linkText,
+                                    { color: colors.link },
+                                  ]}
+                                >
+                                  {standing.first_name} {standing.last_name}
+                                </Text>
+                              </Pressable>
+                            </Link>
                           </View>
 
                           {/* Points */}
@@ -495,6 +507,9 @@ const styles = StyleSheet.create({
   },
   nameText: {
     fontSize: 14,
+  },
+  linkText: {
+    textDecorationLine: "underline",
   },
   categoryText: {
     fontSize: 12,
