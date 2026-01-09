@@ -5,78 +5,35 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Stack, usePathname } from "expo-router";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Platform } from "react-native";
 import "react-native-reanimated";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const pathname = usePathname();
-  const lastHeightRef = useRef<number>(0);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Communicate iframe height to parent window for seamless embedding
+  // Initialize iframe-resizer for seamless embedding
   useEffect(() => {
     if (Platform.OS === "web" && typeof window !== "undefined") {
-      const sendHeight = () => {
-        requestAnimationFrame(() => {
-          const height = document.body.scrollHeight;
+      // Monitor postMessage calls to verify iframe-resizer is working
+      const originalPostMessage = window.parent.postMessage;
+      window.parent.postMessage = ((
+        message: any,
+        options?: WindowPostMessageOptions
+      ) => {
+        console.log("📤 [iframe-resizer message]", message);
+        // Call with proper signature
+        return originalPostMessage.call(window.parent, message, options);
+      }) as typeof originalPostMessage;
 
-          // Only send if height actually changed (prevent infinite loops)
-          if (Math.abs(height - lastHeightRef.current) > 5) {
-            lastHeightRef.current = height;
-            window.parent.postMessage(
-              {
-                type: "chiron:iframe:resize",
-                height,
-                source: "chiron-events",
-              },
-              "*"
-            );
-          }
-        });
-      };
-
-      // Debounced version to prevent excessive calls
-      const debouncedSendHeight = () => {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-        timeoutRef.current = setTimeout(
-          sendHeight,
-          150
-        ) as unknown as NodeJS.Timeout;
-      };
-
-      // Send height on route change (with staggered retries for async content)
-      sendHeight();
-      const timeout1 = setTimeout(sendHeight, 100);
-      const timeout2 = setTimeout(sendHeight, 300);
-      const timeout3 = setTimeout(sendHeight, 600);
-
-      // Observe size changes (less aggressive)
-      const resizeObserver = new ResizeObserver(debouncedSendHeight);
-      resizeObserver.observe(document.body);
-
-      // Less aggressive MutationObserver to prevent infinite loops
-      const mutationObserver = new MutationObserver(debouncedSendHeight);
-      mutationObserver.observe(document.body, {
-        childList: true,
-        subtree: false, // Don't watch entire tree to prevent excessive triggers
-        attributes: false, // Don't watch attribute changes
+      // Dynamically import iframe-resizer child script
+      import("@iframe-resizer/child").then(() => {
+        console.log("✅ iframe-resizer initialized");
       });
-
-      return () => {
-        clearTimeout(timeout1);
-        clearTimeout(timeout2);
-        clearTimeout(timeout3);
-        resizeObserver.disconnect();
-        mutationObserver.disconnect();
-      };
     }
-  }, [pathname]); // Re-run on route changes
+  }, []);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
