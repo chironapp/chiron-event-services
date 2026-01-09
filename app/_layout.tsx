@@ -14,13 +14,14 @@ import "react-native-reanimated";
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
-  // Initialize iframe-resizer for seamless embedding
+  // Initialize iframe-resizer v4 for seamless embedding
   useEffect(() => {
     if (Platform.OS === "web" && typeof window !== "undefined") {
-      // Dynamically import iframe-resizer child script
-      import("@iframe-resizer/child").then(() => {
-        console.log("✅ iframe-resizer initialized");
-      });
+      // Dynamically import iframe-resizer v4 content window script
+      // Only load when embedded in an iframe
+      if (window.self !== window.top) {
+        import("iframe-resizer/js/iframeResizer.contentWindow");
+      }
     }
   }, []);
 
