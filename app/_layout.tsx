@@ -7,13 +7,15 @@ import {
 } from "@react-navigation/native";
 import { Stack, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import "react-native-reanimated";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const pathname = usePathname();
+  const lastHeightRef = useRef<number>(0);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Communicate iframe height to parent window for seamless embedding
   useEffect(() => {
@@ -21,15 +23,31 @@ export default function RootLayout() {
       const sendHeight = () => {
         requestAnimationFrame(() => {
           const height = document.body.scrollHeight;
-          window.parent.postMessage(
-            {
-              type: "chiron:iframe:resize",
-              height,
-              source: "chiron-events",
-            },
-            "*"
-          );
+
+          // Only send if height actually changed (prevent infinite loops)
+          if (Math.abs(height - lastHeightRef.current) > 5) {
+            lastHeightRef.current = height;
+            window.parent.postMessage(
+              {
+                type: "chiron:iframe:resize",
+                height,
+                source: "chiron-events",
+              },
+              "*"
+            );
+          }
         });
+      };
+
+      // Debounced version to prevent excessive calls
+      const debouncedSendHeight = () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(
+          sendHeight,
+          150
+        ) as unknown as NodeJS.Timeout;
       };
 
       // Send height on route change (with staggered retries for async content)
@@ -38,15 +56,16 @@ export default function RootLayout() {
       const timeout2 = setTimeout(sendHeight, 300);
       const timeout3 = setTimeout(sendHeight, 600);
 
-      // Observe size and DOM changes for dynamic content updates
-      const resizeObserver = new ResizeObserver(sendHeight);
+      // Observe size changes (less aggressive)
+      const resizeObserver = new ResizeObserver(debouncedSendHeight);
       resizeObserver.observe(document.body);
 
-      const mutationObserver = new MutationObserver(sendHeight);
+      // Less aggressive MutationObserver to prevent infinite loops
+      const mutationObserver = new MutationObserver(debouncedSendHeight);
       mutationObserver.observe(document.body, {
         childList: true,
-        subtree: true,
-        attributes: true,
+        subtree: false, // Don't watch entire tree to prevent excessive triggers
+        attributes: false, // Don't watch attribute changes
       });
 
       return () => {
