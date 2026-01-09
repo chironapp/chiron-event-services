@@ -31,24 +31,29 @@ export default function SeriesInfo({ series }: SeriesInfoProps) {
   const colors = Colors[isDark ? "dark" : "light"];
 
   const handleWebsitePress = () => {
-    if (series.series_url) {
-      Linking.openURL(series.series_url);
+    if (series.registration_url) {
+      Linking.openURL(series.registration_url);
     }
   };
 
+  // Nothing to display when both description and registration link are missing
+  if (!series.description && !series.registration_url) {
+    return null;
+  }
+
   return (
     <View style={[styles.container, { borderBottomColor: colors.border }]}>
-      <Text style={[styles.seriesTitle, { color: colors.text }]}>
+      {/* <Text style={[styles.seriesTitle, { color: colors.text }]}>
         {series.title}
-      </Text>
+      </Text> */}
 
-      {series.series_url && (
+      {series.registration_url && (
         <TouchableOpacity
           onPress={handleWebsitePress}
           style={styles.websiteContainer}
         >
           <Text style={[styles.websiteLink, { color: colors.link }]}>
-            {series.series_url}
+            {series.registration_url}
           </Text>
         </TouchableOpacity>
       )}

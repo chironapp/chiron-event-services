@@ -260,7 +260,7 @@ export function SeriesStandingsSummaryTable({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 16,
+    marginVertical: 8,
     width: "100%",
     alignSelf: "center",
   },

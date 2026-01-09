@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   sectionHeading: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "600",
     marginBottom: 16,
   },
@@ -293,18 +293,18 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   standingsTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "600",
     // marginBottom: 8,
   },
   categoryLabel: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
     marginTop: 16,
-    marginBottom: 8,
+    marginBottom: 0,
   },
   eventsTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "600",
     // marginBottom: 24,
   },
@@ -313,5 +313,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginTop: 8,
     marginBottom: 16,
+    textDecorationLine: "underline",
   },
 });
