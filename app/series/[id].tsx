@@ -44,6 +44,7 @@ export default function SeriesDetailsPage() {
   const [series, setSeries] = useState<PublicRaceEventSeries | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasSetDefaultTab, setHasSetDefaultTab] = useState(false);
 
   // Fetch series and events on component mount
   useEffect(() => {
@@ -77,6 +78,17 @@ export default function SeriesDetailsPage() {
 
     loadData();
   }, [id]);
+
+  // Set default tab to "results" if there are past events
+  useEffect(() => {
+    if (!hasSetDefaultTab && events.length > 0) {
+      const pastEvents = filterResultsEvents(events);
+      if (pastEvents.length > 0) {
+        setSelectedTab("results");
+      }
+      setHasSetDefaultTab(true);
+    }
+  }, [events, hasSetDefaultTab]);
 
   // Filter events based on selected tab and search query
   const filteredEvents = React.useMemo(() => {
