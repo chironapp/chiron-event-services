@@ -53,7 +53,7 @@ export const SPORT_TYPES = {
   YOGA: 9,
   RECOVERY: 10,
   TRIATHLON: 11,
-  MULTISPORT: 11, // Same as TRIATHLON
+  MULTISPORT: 13,
   OTHER: 12,
 } as const;
 
@@ -479,10 +479,13 @@ export const ALL_AGE_CATEGORIES = Object.values(AGE_CATEGORIES).flat();
 /**
  * Map of category ID to category for quick lookups
  */
-export const AGE_CATEGORY_MAP = ALL_AGE_CATEGORIES.reduce((map, category) => {
-  map[category.id] = category;
-  return map;
-}, {} as Record<number, AgeCategory>);
+export const AGE_CATEGORY_MAP = ALL_AGE_CATEGORIES.reduce(
+  (map, category) => {
+    map[category.id] = category;
+    return map;
+  },
+  {} as Record<number, AgeCategory>,
+);
 
 /**
  * Extended race position constants
@@ -508,7 +511,7 @@ export type RacePosition = number;
  * @returns True if position is a special status (negative), false if regular finish position
  */
 export function isSpecialPosition(
-  position: number | null | undefined
+  position: number | null | undefined,
 ): boolean {
   return position !== null && position !== undefined && position < 0;
 }
@@ -593,7 +596,7 @@ export const RACE_POSITION_SPECIAL_OPTIONS = [
  * ```
  */
 export function formatRacePosition(
-  position: number | null | undefined
+  position: number | null | undefined,
 ): string {
   if (position === null || position === undefined) {
     return "-";
