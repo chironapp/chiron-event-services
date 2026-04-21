@@ -2,6 +2,17 @@
  * Date formatting utility functions
  */
 
+function parseDateInput(dateString: string): Date {
+  const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
+
+  if (dateOnlyMatch) {
+    const [, year, month, day] = dateOnlyMatch;
+    return new Date(Number(year), Number(month) - 1, Number(day));
+  }
+
+  return new Date(dateString);
+}
+
 /**
  * Format a date string to "Friday 11 December 2025" format
  * 
@@ -16,7 +27,7 @@
  */
 export function formatEventDate(dateString: string | null): string {
   if (!dateString) return "Date TBA";
-  const date = new Date(dateString);
+  const date = parseDateInput(dateString);
   const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
   const day = date.getDate();
   const month = date.toLocaleDateString("en-US", { month: "long" });
@@ -132,7 +143,7 @@ export function formatTime(centiseconds: number | null): string {
  * ```
  */
 export function formatShortDate(dateString: string): string {
-  const date = new Date(dateString);
+  const date = parseDateInput(dateString);
   return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
