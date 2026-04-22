@@ -5,6 +5,7 @@
 
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { formatShortDate } from "../../utils/dateUtils";
 
 // Type for the query result
 type RaceEventWithOrganiser = {
@@ -33,6 +34,10 @@ export function RaceEventsList() {
       try {
         setLoading(true);
         setError(null);
+        const today = new Date();
+        const todayDate = `${today.getFullYear()}-${String(
+          today.getMonth() + 1
+        ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
         const { data, error: supabaseError } = await supabase
           .from("public_race_events")
@@ -54,7 +59,7 @@ export function RaceEventsList() {
           `
           )
           .eq("race_status", "published") // Published events only
-          .gte("race_start_date", new Date().toISOString())
+          .gte("race_start_date", todayDate)
           .order("race_start_date", { ascending: true })
           .limit(20);
 
@@ -102,8 +107,7 @@ export function RaceEventsList() {
           {event.description && <p>{event.description}</p>}
           {event.race_start_date && (
             <p>
-              <strong>Date:</strong>{" "}
-              {new Date(event.race_start_date).toLocaleDateString()}
+              <strong>Date:</strong> {formatShortDate(event.race_start_date)}
             </p>
           )}
           <p>
