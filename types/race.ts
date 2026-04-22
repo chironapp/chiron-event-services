@@ -71,7 +71,7 @@ export interface PublicRaceEvent
   race_type: RaceType;
   sport_type: SportType;
   race_status: RaceStatus | null;
-  race_start_date: string | null; // ISO timestamp
+  race_start_date: string | null; // YYYY-MM-DD
   race_started_at_local: string | null; // ISO timestamp
 }
 

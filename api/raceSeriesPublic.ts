@@ -4,6 +4,7 @@
 import { supabase } from "../lib/supabase";
 import type { PublicRaceEventSeries } from "../types/race";
 import type { SeriesParticipantData } from "../types/raceSeries";
+import { parseDateInput } from "@/utils/dateUtils";
 import { getPagination } from "./utils";
 
 /**
@@ -531,9 +532,8 @@ export async function fetchSeriesParticipantEventResults(
       if (!a.event_date && !b.event_date) return 0;
       if (!a.event_date) return 1;
       if (!b.event_date) return -1;
-      return (
-        new Date(b.event_date).getTime() - new Date(a.event_date).getTime()
-      );
+      return parseDateInput(b.event_date).getTime() -
+        parseDateInput(a.event_date).getTime();
     });
 
     return transformedData;
