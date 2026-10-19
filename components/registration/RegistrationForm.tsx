@@ -8,6 +8,11 @@ import TurnstileWidget, {
   type TurnstileWidgetHandle,
 } from "@/components/registration/TurnstileWidget";
 import { SEX_CATEGORY_OPTIONS } from "@/constants/sex";
+import {
+  REGISTRATION_ACTION_BACKGROUND,
+  REGISTRATION_ON_FILL,
+  REGISTRATION_SELECTED_BACKGROUND,
+} from "@/constants/registrationColors";
 import { Colors } from "@/constants/theme";
 import { CHIRON_PRIVACY_URL, CHIRON_TERMS_URL } from "@/constants/urls";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -155,6 +160,8 @@ export default function RegistrationForm({
       result.code === "registration_not_available" ||
       result.code === "event_not_found"
     ) {
+      // Shown if the page still looks open after it reloads the event
+      setFormError(REGISTRATION_ERROR_MESSAGES[result.code]);
       onUnavailable(result.code);
       return;
     }
@@ -236,20 +243,22 @@ export default function RegistrationForm({
                   key={option.value}
                   onPress={() => update("sexCategoryId", option.value)}
                   accessibilityRole="radio"
-                  accessibilityState={{ selected }}
+                  accessibilityState={{ checked: selected }}
                   style={[
                     styles.radio,
                     {
                       borderColor: errors.sexCategoryId
                         ? colors.error
                         : selected
-                          ? colors.primary
+                          ? REGISTRATION_SELECTED_BACKGROUND
                           : colors.border,
-                      backgroundColor: selected ? colors.primary : colors.background,
+                      backgroundColor: selected
+                        ? REGISTRATION_SELECTED_BACKGROUND
+                        : colors.background,
                     },
                   ]}
                 >
-                  <Text style={{ color: selected ? "#fff" : colors.text }}>{option.label}</Text>
+                  <Text style={{ color: selected ? REGISTRATION_ON_FILL : colors.text }}>{option.label}</Text>
                 </Pressable>
               );
             })}
@@ -322,11 +331,11 @@ export default function RegistrationForm({
         accessibilityState={{ disabled: !canSubmit, busy: submitting }}
         style={[
           styles.submit,
-          { backgroundColor: colors.success, opacity: canSubmit ? 1 : 0.5 },
+          { backgroundColor: REGISTRATION_ACTION_BACKGROUND, opacity: canSubmit ? 1 : 0.5 },
         ]}
       >
         {submitting ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={REGISTRATION_ON_FILL} />
         ) : (
           <Text style={styles.submitText}>Register</Text>
         )}
@@ -386,7 +395,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 8,
   },
-  submitText: { color: "#fff", fontSize: 17, fontWeight: "600" },
+  submitText: { color: REGISTRATION_ON_FILL, fontSize: 17, fontWeight: "600" },
   legal: { fontSize: 13, lineHeight: 20, marginTop: 16 },
   contact: { marginTop: 16, marginBottom: 8 },
 });

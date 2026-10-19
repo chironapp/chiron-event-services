@@ -1,5 +1,4 @@
 import type { RegistrationErrorCode } from "@/api/registration";
-import type { RegistrationMode } from "@/constants/raceTypes";
 
 /**
  * Helpers for the public race registration page and the "Register Now" button.
@@ -11,7 +10,7 @@ import type { RegistrationMode } from "@/constants/raceTypes";
 export type RegistrationEvent = {
   id: string;
   race_status: string | null;
-  registration_mode: RegistrationMode | string;
+  registration_mode: string;
   registration_url: string | null;
 };
 

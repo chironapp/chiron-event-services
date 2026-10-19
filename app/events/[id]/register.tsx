@@ -5,6 +5,10 @@ import ContactOrganiserLink from "@/components/registration/ContactOrganiserLink
 import RegistrationForm from "@/components/registration/RegistrationForm";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import { Head } from "@/components/utils/Head";
+import {
+  REGISTRATION_ACTION_BACKGROUND,
+  REGISTRATION_ON_FILL,
+} from "@/constants/registrationColors";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { LinkActions } from "@/utils/linkUtils";
@@ -43,8 +47,9 @@ export default function EventRegistrationPage() {
   const [event, setEvent] = useState<RaceEventWithOrganiser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // Set when the server says registration closed after the form was opened
-  const [closedByServer, setClosedByServer] = useState(false);
+  // Bumped to load the event again, eg after the server says registration is no
+  // longer possible so the page shows the event's current state
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     async function loadEvent() {
@@ -66,10 +71,14 @@ export default function EventRegistrationPage() {
       }
     }
     loadEvent();
-  }, [id]);
+  }, [id, reloadKey]);
 
+  // Every state of this page, including loading and errors, stays out of search
   const screenOptions = (
-    <Stack.Screen options={{ headerShown: false, title: "Register" }} />
+    <>
+      <Head title="Register – Chiron Event Services" robots="noindex" />
+      <Stack.Screen options={{ headerShown: false, title: "Register" }} />
+    </>
   );
 
   if (loading && !event) {
@@ -103,7 +112,7 @@ export default function EventRegistrationPage() {
     );
   }
 
-  const availability = closedByServer ? "closed" : getRegistrationAvailability(event);
+  const availability = getRegistrationAvailability(event);
   const contact = event.organisers?.public_contact ?? null;
   const title = event.title || "Event";
 
@@ -123,7 +132,7 @@ export default function EventRegistrationPage() {
         contact={contact}
         siteKey={process.env.EXPO_PUBLIC_TURNSTILE_SITE_KEY}
         onRegistered={(eventId) => router.replace(`/events/${eventId}?registered=1`)}
-        onUnavailable={() => setClosedByServer(true)}
+        onUnavailable={() => setReloadKey((key) => key + 1)}
       />
     );
   } else if (availability === "closed") {
@@ -153,7 +162,7 @@ export default function EventRegistrationPage() {
         <View style={styles.actions}>
           {isHttpUrl(event.registration_url) && (
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: colors.success }]}
+              style={[styles.button, { backgroundColor: REGISTRATION_ACTION_BACKGROUND }]}
               onPress={() =>
                 LinkActions.openInNewTab(event.registration_url!.trim(), "Error opening registration link")
               }
@@ -195,7 +204,7 @@ export default function EventRegistrationPage() {
         twitterDescription={`Register for ${title}`}
         robots="noindex"
       />
-      {screenOptions}
+      <Stack.Screen options={{ headerShown: false, title: "Register" }} />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <EventTopNav
           eventName={title}
@@ -227,5 +236,5 @@ const styles = StyleSheet.create({
   actions: { marginTop: 20, gap: 16, alignItems: "flex-start" },
   link: { fontSize: 16, textDecorationLine: "underline" },
   button: { paddingVertical: 12, paddingHorizontal: 20, borderRadius: 8 },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  buttonText: { color: REGISTRATION_ON_FILL, fontSize: 16, fontWeight: "600" },
 });
