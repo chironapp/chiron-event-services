@@ -184,7 +184,8 @@ app/
   _layout.tsx                    // Root layout
   about.tsx, index.tsx, etc.     // Main pages
   events/
-    [id].tsx                     // Event details
+    [id].tsx                     // Event details (shows a one-time confirmation after ?registered=1)
+    [id]/register.tsx            // Public registration page (see README → Public registration)
     individuals/
       [participantId].tsx        // Individual participant
 ```
@@ -196,6 +197,7 @@ api/
   events.ts                      // Event data fetching
   results.ts                     // Results/participants data
   organisers.ts                  // Organiser data
+  registration.ts                // Submits a public registration to the register-for-event Edge Function
 ```
 
 ### Utility Functions
@@ -205,6 +207,7 @@ utils/
   nameUtils.ts                   // Name formatting (getNameWithRaceNumber)
   relayRaceUtils.ts             // Relay-specific logic (isRelay, getTeamOrder)
   eventFilters.ts               // Event filtering (isUpcoming)
+  registrationUtils.ts          // Registration availability, "Register Now" target, contact link, form validation
 ```
 
 ## Data Handling Patterns

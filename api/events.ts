@@ -33,6 +33,8 @@ export type RaceEventWithOrganiser = PublicRaceEvent & {
     id: string;
     name: string;
     logo: string | null;
+    /** Public "Contact organiser" email or link (organisers.public_contact) */
+    public_contact?: string | null;
   } | null;
   public_race_event_series: {
     id: string;
@@ -168,6 +170,9 @@ export async function fetchEventById(
         sport_type,
         race_status,
         registration_url,
+        registration_mode,
+        record_sex_category,
+        record_age_category,
         image,
         distance,
         location,
@@ -176,7 +181,8 @@ export async function fetchEventById(
         organisers (
           id,
           name,
-          logo
+          logo,
+          public_contact
         ),
         public_race_event_series (
           id,

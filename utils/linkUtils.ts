@@ -1,5 +1,6 @@
 import { CHIRON_WEBSITE_URL } from "@/constants/urls";
 import * as Linking from "expo-linking";
+import { Linking as ReactNativeLinking } from "react-native";
 
 /**
  * Utility functions for handling external links
@@ -13,6 +14,21 @@ import * as Linking from "expo-linking";
 export const openExternalLink = async (url: string, errorMessage?: string) => {
   try {
     await Linking.openURL(url);
+  } catch (error) {
+    console.error(errorMessage || `Error opening URL: ${url}`, error);
+  }
+};
+
+/**
+ * Opens an external URL in a NEW tab on the web, so the visitor keeps the page
+ * they are on. `openExternalLink` navigates the current tab, which would lose
+ * what someone has typed into a form; use this for links beside a form.
+ * @param url - The URL to open
+ * @param errorMessage - Custom error message for logging
+ */
+export const openInNewTab = async (url: string, errorMessage?: string) => {
+  try {
+    await ReactNativeLinking.openURL(url);
   } catch (error) {
     console.error(errorMessage || `Error opening URL: ${url}`, error);
   }
@@ -85,4 +101,5 @@ export const LinkActions = {
   openContact: openChironContact,
   openEmail: openEmailClient,
   openLink: openExternalLink,
+  openInNewTab,
 } as const;

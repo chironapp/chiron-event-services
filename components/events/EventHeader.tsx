@@ -2,6 +2,7 @@ import RaceStatusBadge from "@/components/ui/RaceStatusBadge";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatEventDate } from "@/utils/dateUtils";
+import { getRegistrationTarget } from "@/utils/registrationUtils";
 import { Link } from "expo-router";
 import React from "react";
 import {
@@ -15,12 +16,15 @@ import {
 
 interface EventHeaderProps {
   event: {
+    id: string;
     title: string | null;
     race_start_date: string | null;
     race_status: string | null;
     location: string | null;
     description: string | null;
     registration_url: string | null;
+    /** none | custom | chiron: where the "Register Now" button goes */
+    registration_mode: string;
     public_race_event_series?: {
       id: string;
       title: string | null;
@@ -29,11 +33,14 @@ interface EventHeaderProps {
 }
 
 /**
- * Reusable event header component displaying event title, date, location, description, and registration button
+ * Reusable event header component displaying event title, date, location, description, and registration button.
+ * The button only shows while registration is open and follows the event's registration option: the hosted
+ * Chiron registration page, or the organiser's own link (http(s) only).
  */
 export default function EventHeader({ event }: EventHeaderProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const registrationTarget = getRegistrationTarget(event);
 
   return (
     <>
@@ -72,13 +79,29 @@ export default function EventHeader({ event }: EventHeaderProps) {
         </Text>
       )}
 
-      {event.race_status === "registration_open" && event.registration_url && (
+      {registrationTarget?.kind === "internal" && (
+        <Link href={registrationTarget.href} asChild>
+          <Pressable
+            accessibilityRole="link"
+            // A single flat style object: Link's asChild passes the style on to the
+            // DOM element, which cannot take an array
+            style={StyleSheet.flatten([
+              styles.registrationButton,
+              { backgroundColor: colors.success },
+            ])}
+          >
+            <Text style={styles.registrationButtonText}>Register Now</Text>
+          </Pressable>
+        </Link>
+      )}
+
+      {registrationTarget?.kind === "external" && (
         <TouchableOpacity
           style={[
             styles.registrationButton,
             { backgroundColor: colors.success },
           ]}
-          onPress={() => Linking.openURL(event.registration_url!)}
+          onPress={() => Linking.openURL(registrationTarget.url)}
         >
           <Text style={styles.registrationButtonText}>Register Now</Text>
         </TouchableOpacity>
