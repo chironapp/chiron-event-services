@@ -21,6 +21,7 @@ This project is specifically designed to complement the Chiron ecosystem by prov
 - **📊 Data Management** - Professional data display with loading states and error handling
 - **🏃‍♂️ Race Discovery** - Browse events and organizers with detailed information
 - **⚡ Fast Performance** - Static site generation with efficient data loading
+- **📝 Public Registration** - Organisers can take registrations on a hosted page (`/events/{id}/register`) protected by Cloudflare Turnstile; see [Public registration](#public-registration)
 
 ## Open Source & Race Timing Community
 
@@ -135,6 +136,7 @@ If you need to modify any of these files:
 
    - `EXPO_PUBLIC_SUPABASE_URL` - Your Supabase project URL
    - `EXPO_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anon/public key
+   - `EXPO_PUBLIC_TURNSTILE_SITE_KEY` - Cloudflare Turnstile **site** key for the registration page (the example file uses Cloudflare's always-passing test key)
 
 3. Start the web development server
 
@@ -145,6 +147,17 @@ If you need to modify any of these files:
 4. Open your browser to view the application
 
 This project uses [Expo Router](https://docs.expo.dev/router/introduction) for file-based routing and is optimized for web deployment.
+
+## Public registration
+
+Organisers choose, per event in the Chiron app, how entrants register: no link, their own link, or the hosted page at `/events/{id}/register` (`registration_mode` = `none` | `custom` | `chiron`). The hosted page:
+
+- shows a form only while the mode is `chiron` **and** the status is "registration open"; otherwise it explains why not, with a "Contact organiser" link when the club has set a public contact
+- asks for first name, last name and email, plus sex and month/year of birth when the event records them (never a bib number)
+- runs a Cloudflare Turnstile check (`components/registration/TurnstileWidget.tsx`) and posts to the `register-for-event` Supabase Edge Function (`api/registration.ts`), which re-checks everything, rejects duplicates, assigns the bib and creates the start list entry
+- on success redirects to the start list (`/events/{id}?registered=1`), which shows a one-time confirmation
+
+The button on the event page ("Register Now") follows the same mode. The page is marked `noindex` and is not in the sitemap. The Edge Function, database rules and organiser settings live in the main `chironapp` repository (`supabase/functions/register-for-event/README.md`).
 
 ## Backend & Database
 
@@ -198,12 +211,14 @@ The React components and hooks remain unchanged when switching backends.
 /app                    # Expo Router pages (file-based routing)
 ├── index.tsx          # Find Your Race (home page)
 ├── organisers.tsx     # Browse Race Organisers page
+├── events/[id]/register.tsx  # Public registration page (form, closed / elsewhere / unavailable states)
 ├── about.tsx          # About Chiron Event Services
 └── _layout.tsx        # Root layout configuration
 
 /components            # Reusable UI components
 ├── /input             # Form components (SearchInput, ToggleSwitch)
 ├── /ui                # Display components (NoResultsFound, MaxWidthContainer)
+├── /registration      # Registration form, Turnstile widget, select field, contact link, confirmation notice
 ├── TopNav.tsx         # Navigation header with theme support
 └── Footer.tsx         # Site footer with links
 

@@ -6,6 +6,7 @@ import {
 import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
 import { EventHeader, ResultsToggle, SearchBar } from "@/components/events";
+import RegisteredNotice from "@/components/registration/RegisteredNotice";
 import { StartListResultsTable } from "@/components/results/StartListResultsTable";
 import CategoryFilter from "@/components/ui/CategoryFilter";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
@@ -33,7 +34,10 @@ import {
  * @returns {JSX.Element} The event details page
  */
 export default function EventDetailsPage() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, registered } = useLocalSearchParams<{
+    id: string;
+    registered?: string;
+  }>();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colors = Colors[isDark ? "dark" : "light"];
@@ -50,6 +54,15 @@ export default function EventDetailsPage() {
   const [resultsPage, setResultsPage] = useState(1);
   const [resultsCount, setResultsCount] = useState(0);
   const [hasMoreResults, setHasMoreResults] = useState(false);
+  // One-time confirmation after registering (the register page redirects with ?registered=1)
+  const [showRegistered, setShowRegistered] = useState(registered === "1");
+
+  // Remember the confirmation but drop the parameter so a refresh does not show it again
+  useEffect(() => {
+    if (!registered) return;
+    if (registered === "1") setShowRegistered(true);
+    router.setParams({ registered: undefined });
+  }, [registered]);
 
   // Fetch event on component mount
   useEffect(() => {
@@ -255,6 +268,10 @@ export default function EventDetailsPage() {
 
         <ScrollView style={styles.content}>
           <MaxWidthContainer style={styles.contentContainer}>
+            {showRegistered && (
+              <RegisteredNotice onDismiss={() => setShowRegistered(false)} />
+            )}
+
             <EventHeader event={event} />
 
             {isRelayEvent && (

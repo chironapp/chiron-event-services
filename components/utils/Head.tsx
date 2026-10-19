@@ -55,12 +55,14 @@ export interface HeadProps {
   twitterImage?: string;
   /** Theme color */
   themeColor?: string;
+  /** Robots directive, eg "noindex" for transactional pages; omitted by default */
+  robots?: string;
 }
 
 /**
  * Default values for the Head component
  */
-const defaults: Required<HeadProps> = {
+const defaults: Required<Omit<HeadProps, "robots">> = {
   title: "Chiron Event Services – Professional Race Timing",
   description:
     "Chiron Event Services provides professional race timing, start lists, athlete registrations, and real-time race results for sports events of all sizes.",
@@ -112,6 +114,7 @@ export function Head(props: HeadProps) {
     twitterDescription = defaults.twitterDescription,
     twitterImage = defaults.twitterImage,
     themeColor = defaults.themeColor,
+    robots,
   } = props;
 
   return (
@@ -122,6 +125,7 @@ export function Head(props: HeadProps) {
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
       <meta name="author" content={author} />
+      {robots && <meta name="robots" content={robots} />}
 
       {/* Open Graph */}
       <meta property="og:type" content="website" />
