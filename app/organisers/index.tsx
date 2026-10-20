@@ -369,6 +369,7 @@ const styles = StyleSheet.create({
   },
   row: {
     justifyContent: "space-between",
+    alignItems: "stretch",
   },
   paginationContainer: {
     flexDirection: "row",

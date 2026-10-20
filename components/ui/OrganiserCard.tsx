@@ -40,7 +40,7 @@ export default function OrganiserCard({
   return (
     <View style={[styles.cardWrapper, fullWidth && styles.cardWrapperFull]}>
       <Link href={`/organisers/${organiser.id}`} asChild>
-        <Pressable>
+        <Pressable style={styles.pressable}>
           {({ pressed }) => (
             <View
               style={[
@@ -85,10 +85,14 @@ const styles = StyleSheet.create({
     width: "48.5%",
     marginBottom: 20,
   },
+  pressable: {
+    flex: 1,
+  },
   cardWrapperFull: {
     width: "100%",
   },
   organiserCard: {
+    flex: 1,
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
