@@ -14,6 +14,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { useOrganisers } from "../../hooks/useOrganisers";
@@ -27,6 +28,9 @@ import type { Organiser } from "../../lib/supabase";
 export default function OrganisersPage() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+  const numColumns = isMobile ? 1 : 2;
   const [searchQuery, setSearchQuery] = useState("");
 
   const {
@@ -73,7 +77,7 @@ export default function OrganisersPage() {
    * Render individual organiser card
    */
   const renderOrganiserCard = ({ item }: { item: Organiser }) => (
-    <OrganiserCard organiser={item} />
+    <OrganiserCard organiser={item} fullWidth={isMobile} />
   );
 
   /**
@@ -278,8 +282,9 @@ export default function OrganisersPage() {
                   data={organisers}
                   renderItem={renderOrganiserCard}
                   keyExtractor={(item) => item.id}
-                  numColumns={2}
-                  columnWrapperStyle={styles.row}
+                  key={`organisers-${numColumns}`}
+                  numColumns={numColumns}
+                  columnWrapperStyle={numColumns > 1 ? styles.row : undefined}
                   style={styles.grid}
                   scrollEnabled={false}
                   refreshControl={
@@ -364,7 +369,6 @@ const styles = StyleSheet.create({
   },
   row: {
     justifyContent: "space-between",
-    paddingHorizontal: 4,
   },
   paginationContainer: {
     flexDirection: "row",
