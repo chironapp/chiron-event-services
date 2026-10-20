@@ -9,7 +9,6 @@ import { Platform, View } from "react-native";
 
 /** The parts of Cloudflare's `window.turnstile` this component uses. */
 type TurnstileApi = {
-  ready?: (callback: () => void) => void;
   render: (container: HTMLElement, options: Record<string, unknown>) => string;
   reset: (widgetId?: string) => void;
   remove: (widgetId?: string) => void;
@@ -40,7 +39,8 @@ interface TurnstileWidgetProps {
 let scriptPromise: Promise<TurnstileApi> | null = null;
 
 /**
- * Loads Cloudflare's Turnstile script once and resolves with its API.
+ * Loads Cloudflare's Turnstile script once and resolves with its API. The tag
+ * has no async/defer attribute (see `done` below).
  *
  * @returns The `window.turnstile` API
  * @throws When the script cannot be loaded
@@ -48,19 +48,20 @@ let scriptPromise: Promise<TurnstileApi> | null = null;
 function loadTurnstile(): Promise<TurnstileApi> {
   if (scriptPromise) return scriptPromise;
   scriptPromise = new Promise<TurnstileApi>((resolve, reject) => {
-    const ready = () => {
+    // After the script's load event `window.turnstile` is usable for explicit
+    // rendering. Do not call `turnstile.ready()`: Cloudflare throws if the
+    // script tag was loaded async/defer, and a script injected like this one
+    // must not set either.
+    const done = () => {
       const api = window.turnstile;
       if (!api) return reject(new Error("Turnstile did not initialise"));
-      if (api.ready) api.ready(() => resolve(api));
-      else resolve(api);
+      resolve(api);
     };
-    if (window.turnstile) return ready();
+    if (window.turnstile) return done();
 
     const script = document.createElement("script");
     script.src = TURNSTILE_SCRIPT_URL;
-    script.async = true;
-    script.defer = true;
-    script.onload = ready;
+    script.onload = done;
     script.onerror = () => {
       scriptPromise = null; // allow a retry on the next mount
       reject(new Error("Could not load Turnstile"));

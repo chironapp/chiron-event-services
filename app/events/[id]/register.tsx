@@ -1,7 +1,9 @@
 import { fetchEventById, type RaceEventWithOrganiser } from "@/api/events";
 import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
+import TopNav from "@/components/TopNav";
 import ContactOrganiserLink from "@/components/registration/ContactOrganiserLink";
+import EventNotFound from "@/components/registration/EventNotFound";
 import RegistrationForm from "@/components/registration/RegistrationForm";
 import MaxWidthContainer from "@/components/ui/MaxWidthContainer";
 import { Head } from "@/components/utils/Head";
@@ -47,6 +49,7 @@ export default function EventRegistrationPage() {
   const [event, setEvent] = useState<RaceEventWithOrganiser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
   // Bumped to load the event again, eg after the server says registration is no
   // longer possible so the page shows the event's current state
   const [reloadKey, setReloadKey] = useState(0);
@@ -57,9 +60,11 @@ export default function EventRegistrationPage() {
       try {
         setLoading(true);
         setError(null);
+        setNotFound(false);
         const eventData = await fetchEventById(id);
         if (!eventData) {
-          setError("Event not found");
+          setEvent(null);
+          setNotFound(true);
           return;
         }
         setEvent(eventData);
@@ -97,14 +102,24 @@ export default function EventRegistrationPage() {
     );
   }
 
+  if (notFound || (!event && !error)) {
+    return (
+      <>
+        {screenOptions}
+        <EventNotFound />
+      </>
+    );
+  }
+
   if (error || !event) {
     return (
       <>
         {screenOptions}
         <View style={[styles.container, { backgroundColor: colors.background }]}>
+          <TopNav />
           <View style={styles.centered}>
-            <Text style={[styles.title, { color: colors.error }]}>
-              {error || "Event not found"}
+            <Text style={[styles.title, { color: colors.text }]}>
+              {error || "Something went wrong"}
             </Text>
           </View>
         </View>

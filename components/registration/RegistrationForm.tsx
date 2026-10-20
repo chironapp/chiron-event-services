@@ -324,23 +324,6 @@ export default function RegistrationForm({
         </View>
       )}
 
-      <Pressable
-        onPress={handleSubmit}
-        disabled={!canSubmit}
-        accessibilityRole="button"
-        accessibilityState={{ disabled: !canSubmit, busy: submitting }}
-        style={[
-          styles.submit,
-          { backgroundColor: REGISTRATION_ACTION_BACKGROUND, opacity: canSubmit ? 1 : 0.5 },
-        ]}
-      >
-        {submitting ? (
-          <ActivityIndicator color={REGISTRATION_ON_FILL} />
-        ) : (
-          <Text style={styles.submitText}>Register</Text>
-        )}
-      </Pressable>
-
       <Text style={[styles.legal, { color: colors.subText }]}>
         By registering you agree to the{" "}
         <Text
@@ -360,6 +343,23 @@ export default function RegistrationForm({
         </Text>
         . Your details are shared with the event organiser.
       </Text>
+
+      <Pressable
+        onPress={handleSubmit}
+        disabled={!canSubmit}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: !canSubmit, busy: submitting }}
+        style={[
+          styles.submit,
+          { backgroundColor: REGISTRATION_ACTION_BACKGROUND, opacity: canSubmit ? 1 : 0.5 },
+        ]}
+      >
+        {submitting ? (
+          <ActivityIndicator color={REGISTRATION_ON_FILL} />
+        ) : (
+          <Text style={styles.submitText}>Register</Text>
+        )}
+      </Pressable>
 
       <View style={styles.contact}>
         <ContactOrganiserLink contact={contact} />
@@ -396,6 +396,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   submitText: { color: REGISTRATION_ON_FILL, fontSize: 17, fontWeight: "600" },
-  legal: { fontSize: 13, lineHeight: 20, marginTop: 16 },
+  legal: { fontSize: 13, lineHeight: 20, marginTop: 4, marginBottom: 8 },
   contact: { marginTop: 16, marginBottom: 8 },
 });
