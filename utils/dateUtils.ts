@@ -2,7 +2,7 @@
  * Date formatting utility functions
  */
 
-function parseDateInput(dateString: string): Date {
+export function parseDateInput(dateString: string): Date {
   const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
 
   if (dateOnlyMatch) {
@@ -52,6 +52,7 @@ export function formatDateTime(dateTimeString: string | null): string {
   
   try {
     const date = new Date(dateTimeString);
+    if (isNaN(date.getTime())) return "-";
     return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",

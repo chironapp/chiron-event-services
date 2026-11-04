@@ -1,4 +1,5 @@
 import NoResultsFound from "@/components/ui/NoResultsFound";
+import { ErrorNotice } from "@/components/ErrorPage";
 import SeriesCard from "@/components/ui/SeriesCard";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -59,7 +60,7 @@ export default function SeriesList({
 
   // Show error state
   if (error) {
-    return <NoResultsFound title="Error Loading Series" message={error} />;
+    return <ErrorNotice />;
   }
 
   // Show empty state

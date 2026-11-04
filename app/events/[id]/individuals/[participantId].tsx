@@ -1,3 +1,4 @@
+import ErrorPage from "@/components/ErrorPage";
 import {
   fetchParticipantById,
   getCategoryParticipantsCount,
@@ -157,29 +158,8 @@ export default function IndividualResultPage() {
   if (error || !participant) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            headerShown: false,
-            title: "Error",
-          }}
-        />
-        <View
-          style={[
-            styles.container,
-            { backgroundColor: isDark ? "#000000" : "#ffffff" },
-          ]}
-        >
-          <View style={styles.errorContainer}>
-            <Text
-              style={[
-                styles.errorText,
-                { color: isDark ? "#ff6b6b" : "#d32f2f" },
-              ]}
-            >
-              {error || "Participant not found"}
-            </Text>
-          </View>
-        </View>
+        <Stack.Screen options={{ headerShown: false, title: "Unable to load page" }} />
+        <ErrorPage />
       </>
     );
   }
@@ -598,17 +578,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 16,
   },
-  errorContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    textAlign: "center",
-  },
   linkText: {
     textDecorationLine: "underline",
   },
 });
+
+export { PublicPageErrorBoundary as ErrorBoundary } from "@/components/ErrorPage";

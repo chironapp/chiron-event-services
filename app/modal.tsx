@@ -27,3 +27,5 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
 });
+
+export { PublicPageErrorBoundary as ErrorBoundary } from "@/components/ErrorPage";

@@ -2,7 +2,20 @@
  * Tests for date utility functions
  */
 
-import { formatDateTime, formatDateTimeLocal, formatTime, formatEventDate, formatShortDate } from '../dateUtils';
+import { parseDateInput, formatDateTime, formatDateTimeLocal, formatTime, formatEventDate, formatShortDate } from '../dateUtils';
+
+describe('parseDateInput public API', () => {
+  it('exports a parser that preserves local calendar dates', () => {
+    const date = parseDateInput('2026-11-04');
+    expect([date.getFullYear(), date.getMonth(), date.getDate(), date.getHours()])
+      .toEqual([2026, 10, 4, 0]);
+  });
+
+  it('preserves timezone offsets in timestamp inputs', () => {
+    expect(parseDateInput('2026-11-04T10:00:00+10:00').toISOString())
+      .toBe('2026-11-04T00:00:00.000Z');
+  });
+});
 
 describe('formatDateTime', () => {
   it('should format ISO datetime string to readable time', () => {

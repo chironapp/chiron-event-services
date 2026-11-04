@@ -179,3 +179,5 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
+
+export { PublicPageErrorBoundary as ErrorBoundary } from "@/components/ErrorPage";

@@ -42,6 +42,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run regression tests
+        run: npm test
+
       - name: Install Expo CLI
         run: npm install -g @expo/cli
 
@@ -54,10 +57,8 @@ jobs:
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
           EXPO_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.EXPO_PUBLIC_TURNSTILE_SITE_KEY }}
 
-      - name: Copy 404 page for GitHub Pages
-        run: |
-          echo "📄 Copying index.html to 404.html for GitHub Pages"
-          cp dist/index.html dist/404.html
+      - name: Create client-rendered fallback for GitHub Pages deep links
+        run: npm run create-pages-fallback
 
       - name: Generate sitemap
         run: |

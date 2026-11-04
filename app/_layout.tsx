@@ -1,15 +1,29 @@
 import { Head } from "@/components/utils/Head";
+import ErrorPage from "@/components/ErrorPage";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Stack } from "expo-router";
+import { Stack, type ErrorBoundaryProps } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import "react-native-reanimated";
+
+export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
+  const recover = () => {
+    // Remounting the root Stack can reset navigation to its first screen.
+    // Reload the current web URL so recovery keeps the visitor on their page.
+    if (Platform.OS === "web" && typeof window !== "undefined") {
+      window.location.reload();
+    } else {
+      void retry();
+    }
+  };
+  return <ErrorPage onRetry={recover} />;
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

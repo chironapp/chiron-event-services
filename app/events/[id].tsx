@@ -1,3 +1,4 @@
+import ErrorPage from "@/components/ErrorPage";
 import { fetchEventById, type RaceEventWithOrganiser } from "@/api/events";
 import {
   fetchRaceResults,
@@ -175,21 +176,8 @@ export default function EventDetailsPage() {
   if (error || !event) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            headerShown: false,
-            title: "Error",
-          }}
-        />
-        <View
-          style={[styles.container, { backgroundColor: colors.background }]}
-        >
-          <View style={styles.errorContainer}>
-            <Text style={[styles.errorText, { color: colors.error }]}>
-              {error || "Event not found"}
-            </Text>
-          </View>
-        </View>
+        <Stack.Screen options={{ headerShown: false, title: "Unable to load page" }} />
+        <ErrorPage />
       </>
     );
   }
@@ -406,14 +394,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 16,
   },
-  errorContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    textAlign: "center",
-  },
 });
+
+export { PublicPageErrorBoundary as ErrorBoundary } from "@/components/ErrorPage";

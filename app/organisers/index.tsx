@@ -1,3 +1,4 @@
+import { ErrorNotice } from "@/components/ErrorPage";
 import Footer from "@/components/Footer";
 import { SearchInput } from "@/components/input";
 import TopNav from "@/components/TopNav";
@@ -178,11 +179,7 @@ export default function OrganisersPage() {
               ? "Try adjusting your search terms"
               : "No race organisers are currently available"}
           </Text>
-          {error && (
-            <TouchableOpacity style={styles.retryButton} onPress={refresh}>
-              <Text style={styles.retryButtonText}>Try Again</Text>
-            </TouchableOpacity>
-          )}
+          {error && <ErrorNotice onRetry={refresh} />}
         </>
       )}
     </View>
@@ -432,3 +429,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
+export { PublicPageErrorBoundary as ErrorBoundary } from "@/components/ErrorPage";

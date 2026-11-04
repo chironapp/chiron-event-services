@@ -1,3 +1,4 @@
+import { ErrorNotice } from "@/components/ErrorPage";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import NoResultsFound from "@/components/ui/NoResultsFound";
 import RaceEventCard from "@/components/ui/RaceEventCard";
@@ -79,18 +80,7 @@ export default function EventsList({
 
   // Error State
   if (error && !loading) {
-    return (
-      <View style={[styles.errorContainer, containerStyle]}>
-        <Text
-          style={[
-            styles.errorText,
-            { color: isDark ? "#ff6b6b" : "#d32f2f" },
-          ]}
-        >
-          Error: {error}
-        </Text>
-      </View>
-    );
+    return <ErrorNotice />;
   }
 
   // Events List
@@ -134,17 +124,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-  },
-  errorContainer: {
-    marginTop: 32,
-    marginBottom: 32,
-    padding: 16,
-    borderRadius: 8,
-    backgroundColor: "rgba(211, 47, 47, 0.1)",
-  },
-  errorText: {
-    fontSize: 16,
-    textAlign: "center",
   },
   eventsListContainer: {
     marginTop: 16,

@@ -5,6 +5,8 @@
 // Company website and contact
 export const CHIRON_WEBSITE_URL = "https://www.chironapp.com/";
 export const CHIRON_CONTACT_URL = "https://www.chironapp.com/contact";
+export const CHIRON_REPORT_ISSUE_URL =
+  "https://www.chironapp.com/support-center/contact/";
 
 // Legal pages linked from forms that collect personal data
 export const CHIRON_TERMS_URL = "https://www.chironapp.com/terms/";
@@ -25,6 +27,7 @@ export const CHIRON_SUPPORT_EMAIL = "support@chironapp.com";
 export const EXTERNAL_URLS = {
   CHIRON_WEBSITE: CHIRON_WEBSITE_URL,
   CHIRON_CONTACT: CHIRON_CONTACT_URL,
+  CHIRON_REPORT_ISSUE: CHIRON_REPORT_ISSUE_URL,
   CHIRON_SUPPORT_EMAIL: CHIRON_SUPPORT_EMAIL,
   CHIRON_TERMS: CHIRON_TERMS_URL,
   CHIRON_PRIVACY: CHIRON_PRIVACY_URL,
