@@ -1,0 +1,40 @@
+name: Public pages smoke checks
+
+on:
+  schedule:
+    # Daily at 06:17 Brisbane time (20:17 UTC the previous day).
+    - cron: '17 20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-pages-smoke
+  cancel-in-progress: false
+
+jobs:
+  public-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - run: npm run test:smoke
+        env:
+          SMOKE_BASE_URL: https://events.chironapp.com
+      - name: Save browser report and failure evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-pages-smoke-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14

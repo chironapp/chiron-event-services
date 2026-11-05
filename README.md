@@ -23,6 +23,61 @@ This project is specifically designed to complement the Chiron ecosystem by prov
 - **⚡ Fast Performance** - Static site generation with efficient data loading
 - **📝 Public Registration** - Organisers can take registrations on a hosted page (`/events/{id}/register`) protected by Cloudflare Turnstile; see [Public registration](#public-registration)
 
+## Public page errors and scheduled checks
+
+`components/ErrorPage.tsx` provides the shared fallback for data-loading errors,
+unknown routes, and the screen/root Expo Router error boundaries. `ErrorNotice` embeds the
+same recovery links in a list. Technical errors stay in the console; visitors can
+return to events or use **Report an issue**, whose URL is defined once as
+`CHIRON_REPORT_ISSUE_URL` in `constants/urls.ts`. Boundaries and reloadable forms
+also offer **Try again**.
+
+The web export retains Expo's `static` output for prerendered informational
+pages. `npm run create-pages-fallback` creates `404.html` from the exported HTML,
+emptying its app root and disabling Expo's hydration flag for that fallback only.
+GitHub Pages serves this client-rendered shell for dynamic deep links. Serving
+the prerendered home page at an athlete URL previously caused React hydration
+error #418. The fallback builder fails the build if Expo changes the expected
+HTML contract, so it cannot silently ship a broken shell.
+The top navigation also keeps its initial menu consistent with the static render
+until hydration finishes, then applies the browser's desktop/mobile breakpoint.
+
+The **Public pages smoke checks** GitHub Action runs daily at **06:17 Brisbane
+time** (20:17 UTC on the previous day), and can be started manually from Actions.
+It checks the deployed public site in desktop and mobile Chromium, without login
+or Supabase secrets. It verifies visible content, completed loading states, no
+error fallback, no uncaught browser/hydration errors, and no failed Supabase data
+requests. GitHub Pages can return HTTP 404 for a working deep link, so the checks
+accept that status only alongside successful rendering. Failure reports include
+screenshots and Playwright traces, retained for 14 days. GitHub Actions failure
+notifications follow each user's GitHub notification settings.
+
+**Known pages must be defined before running the checks.** The initial list is
+already populated in `tests/smoke/pages.json`, including the reported athlete,
+both individual and relay events, and at least one instance of every current
+public route. Each entry records the route template, a real public URL path, and
+expected content. Keep these public records available or update their entries if
+they are removed, renamed, or made private. The route-coverage check fails when
+a new route is added without a corresponding entry. Registration checks only
+view a closed event's registration page; they never submit a registration or
+attempt to solve Turnstile.
+
+Run locally:
+
+```sh
+npm ci
+npm test
+npx playwright install chromium
+npm run test:smoke
+# Check another deployment or a locally served production export:
+SMOKE_BASE_URL=http://localhost:8081 npm run test:smoke
+```
+
+Regression tests also run on pull requests and before deployment. The date
+regression exercises the synced series API with multiple dated event results;
+this catches a missing `parseDateInput` export in this repository without editing
+the upstream-synced API file.
+
 ## Open Source & Race Timing Community
 
 Feel free to use some or all of this code for your own race timing projects! The components and architecture patterns here can be adapted for various endurance sports timing applications.

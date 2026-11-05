@@ -1,7 +1,7 @@
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { LinkActions } from "@/utils/linkUtils";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions, Modal, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -18,9 +18,16 @@ export default function TopNav() {
   const colorScheme = useColorScheme();
   const { width } = useWindowDimensions();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  useEffect(() => {
+    setHasHydrated(true);
+  }, []);
 
   // Use mobile layout when width is less than 768px
-  const isMobile = width < 768;
+  // Match the static render's mobile menu until hydration finishes, then use
+  // the browser width. Rendering desktop links immediately caused error #418.
+  const isMobile = !hasHydrated || width < 768;
 
   /**
    * Handles navigation to the About page

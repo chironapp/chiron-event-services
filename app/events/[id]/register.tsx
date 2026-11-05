@@ -1,7 +1,7 @@
+import ErrorPage from "@/components/ErrorPage";
 import { fetchEventById, type RaceEventWithOrganiser } from "@/api/events";
 import EventTopNav from "@/components/EventTopNav";
 import Footer from "@/components/Footer";
-import TopNav from "@/components/TopNav";
 import ContactOrganiserLink from "@/components/registration/ContactOrganiserLink";
 import EventNotFound from "@/components/registration/EventNotFound";
 import RegistrationForm from "@/components/registration/RegistrationForm";
@@ -112,19 +112,7 @@ export default function EventRegistrationPage() {
   }
 
   if (error || !event) {
-    return (
-      <>
-        {screenOptions}
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
-          <TopNav />
-          <View style={styles.centered}>
-            <Text style={[styles.title, { color: colors.text }]}>
-              {error || "Something went wrong"}
-            </Text>
-          </View>
-        </View>
-      </>
-    );
+    return <>{screenOptions}<ErrorPage onRetry={() => setReloadKey((key) => key + 1)} /></>;
   }
 
   const availability = getRegistrationAvailability(event);
@@ -253,3 +241,5 @@ const styles = StyleSheet.create({
   button: { paddingVertical: 12, paddingHorizontal: 20, borderRadius: 8 },
   buttonText: { color: REGISTRATION_ON_FILL, fontSize: 16, fontWeight: "600" },
 });
+
+export { PublicPageErrorBoundary as ErrorBoundary } from "@/components/ErrorPage";

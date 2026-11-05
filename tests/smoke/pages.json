@@ -1,0 +1,18 @@
+[
+  { "route": "/", "path": "/", "text": "Find Your Race" },
+  { "route": "/about", "path": "/about", "text": "Chiron Event Services" },
+  { "route": "/organisers", "path": "/organisers", "text": "Race Organisers" },
+  { "route": "/organisers/[id]", "path": "/organisers/9393cb48-692c-4d8a-bc06-ad32d4bc7cd3", "text": "Bush Turkey" },
+  { "route": "/events/[id]", "path": "/events/68fec914-844f-42db-a78b-34ece847a3b4", "text": "Bush Turkey Classic Round One" },
+  { "route": "/events/[id]", "path": "/events/7529ee32-fa91-410b-8c78-bc3d7299c789", "text": "Bush Turkey Relay" },
+  { "route": "/events/[id]/individuals/[participantId]", "path": "/events/68fec914-844f-42db-a78b-34ece847a3b4/individuals/66002d22-9287-4a34-8956-13ac6ff606cf", "text": "Status" },
+  { "route": "/events/[id]/register", "path": "/events/68fec914-844f-42db-a78b-34ece847a3b4/register", "text": "View the start list" },
+  { "route": "/events/[id]/teams", "path": "/events/7529ee32-fa91-410b-8c78-bc3d7299c789/teams", "text": "Team Results" },
+  { "route": "/events/[id]/teams/[teamId]", "path": "/events/7529ee32-fa91-410b-8c78-bc3d7299c789/teams/66efb038-49a7-4a6b-b8e3-c49f2d90fb51", "text": "WHITE" },
+  { "route": "/series/[id]", "path": "/series/f60bf104-4903-4e8e-b4e1-dd9ef73193e5", "text": "Bush Turkey Classic 2025-26" },
+  { "route": "/series/[id]/standings", "path": "/series/f60bf104-4903-4e8e-b4e1-dd9ef73193e5/standings", "text": "Series Standings" },
+  { "route": "/series/[id]/standings/[participantId]", "path": "/series/f60bf104-4903-4e8e-b4e1-dd9ef73193e5/standings/26555dea-ff42-4e70-b747-61063b1026a6", "text": "Event Results" },
+  { "route": "/event-example", "path": "/event-example", "text": "Event Details Page Example" },
+  { "route": "/organiser-example", "path": "/organiser-example", "text": "Organiser Details Page Example" },
+  { "route": "/modal", "path": "/modal", "text": "This is a modal" }
+]

@@ -104,3 +104,5 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
 });
+
+export { PublicPageErrorBoundary as ErrorBoundary } from "@/components/ErrorPage";

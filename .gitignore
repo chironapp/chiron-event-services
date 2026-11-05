@@ -46,3 +46,7 @@ app-example
 .env
 .env.local
 .env.*.local
+
+# Browser checks
+playwright-report/
+test-results/
